@@ -1,7 +1,7 @@
 import unittest
 
 from ..mostSignificantBit import mostSignificantBit
-from sdkcore.constants import MaxUint256
+from sdkcore import MaxUint256
 
 class TestMostSignificantBit(unittest.TestCase):
 

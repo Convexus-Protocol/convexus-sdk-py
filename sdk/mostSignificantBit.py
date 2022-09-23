@@ -1,4 +1,4 @@
-from sdkcore.constants import MaxUint256
+from sdkcore import MaxUint256
 
 POWERS_OF_2 = list(map(lambda pow: [pow, 2**pow], [128, 64, 32, 16, 8, 4, 2, 1]))
 

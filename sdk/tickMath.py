@@ -1,6 +1,6 @@
 from .mostSignificantBit import mostSignificantBit
 
-from sdkcore.constants import MaxUint256
+from sdkcore import MaxUint256
 
 def mulShift (val: int, mulBy: int) -> int:
   return (val * mulBy) >> 128
