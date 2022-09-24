@@ -1,4 +1,5 @@
-from .decodeSqrtRatiox96 import *
-from .encodeSqrtRatiox96 import *
+from .decodeSqrtRatioX96 import *
+from .encodeSqrtRatioX96 import *
 from .mostSignificantBit import *
+from .maxLiquidityForAmounts import *
 from .tickMath import *

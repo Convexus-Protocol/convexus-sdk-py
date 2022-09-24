@@ -52,9 +52,9 @@ class Interface:
 
     assert len(inputs) == len(values), f"INVALID_ARGS_COUNT (expected {len(inputs)}, got {len(values)})"
 
-    payload = {
+    payload: dict = {
       "to": self.contractAddress,
-      "method": method
+      "method": method,
     }
     
     if icxAmount > 0:

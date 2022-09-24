@@ -18,7 +18,7 @@ class Contract(object):
     data = self.interface.encodeFunctionData(method, args)
     return self.buildCall(method, data)
 
-  def buildCall (self, method: str, data: any):
+  def buildCall (self, method: str, data: dict):
     txObj = CallBuilder()\
       .to(self.address)\
       .method(method)\

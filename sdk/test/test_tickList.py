@@ -18,7 +18,7 @@ class TestTickList(unittest.TestCase):
       TickList.validateList([self.lowTick], 1)
     self.assertEqual(str(cm.exception), "ZERO_NET")
   
-  def test_validate_errorsForIncompleteLists(self):
+  def test_validate_errorsForSorted(self):
     with self.assertRaises(AssertionError) as cm:
       TickList.validateList([self.highTick, self.lowTick, self.midTick], 1)
     self.assertEqual(str(cm.exception), "SORTED")

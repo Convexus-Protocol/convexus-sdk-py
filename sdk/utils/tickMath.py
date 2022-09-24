@@ -1,5 +1,5 @@
 from sdk.utils.mostSignificantBit import mostSignificantBit
-from sdkcore import MaxUint256
+from sdkcore.constants import MaxUint256
 
 def mulShift (val: int, mulBy: int) -> int:
   return (val * mulBy) >> 128
@@ -25,6 +25,7 @@ class TickMath:
   """
   MAX_SQRT_RATIO: int = 1461446703485210103287273052203988822378723970342
 
+  @staticmethod
   def getSqrtRatioAtTick(tick: int) -> int:
     """
     * Returns the sqrt ratio as a Q64.96 for the given tick. The sqrt ratio is computed as sqrt(1.0001)^tick
@@ -100,6 +101,7 @@ class TickMath:
     # back to Q96
     return (ratio // Q32) + 1 if ratio % Q32 > 0 else ratio // Q32
 
+  @staticmethod
   def getTickAtSqrtRatio(sqrtRatioX96: int) -> int:
     """
     * Returns the tick corresponding to a given sqrt ratio, s.t. #getSqrtRatioAtTick(tick) <= sqrtRatioX96

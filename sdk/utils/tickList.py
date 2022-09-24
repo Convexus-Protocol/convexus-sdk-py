@@ -41,6 +41,7 @@ class TickList:
     assert tick.index == index, 'NOT_CONTAINED'
     return tick
 
+  @staticmethod
   def binarySearch (ticks: List[Tick], tick: int) -> int:
     """
     * Finds the largest tick in the list of ticks that is less than or equal to tick

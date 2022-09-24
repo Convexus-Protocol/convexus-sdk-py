@@ -1,6 +1,6 @@
 import math
 
-def encodeSqrtRatiox96(amount1: int, amount0: int) -> int:
+def encodeSqrtRatioX96(amount1: int, amount0: int) -> int:
   """
   * Returns the sqrt ratio as a Q64.96 corresponding to a given ratio of amount1 and amount0
   * @param amount1 The numerator amount i.e., the amount of token1
