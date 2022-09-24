@@ -1,5 +1,5 @@
 import unittest
-from ..decodeSqrtRatiox96 import decodeSqrtRatiox96
+from sdk.utils.decodeSqrtRatiox96 import decodeSqrtRatiox96
 
 class TestDecodeSqrtRatioX96(unittest.TestCase):
 

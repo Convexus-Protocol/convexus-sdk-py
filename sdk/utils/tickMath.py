@@ -1,5 +1,4 @@
-from .mostSignificantBit import mostSignificantBit
-
+from sdk.utils.mostSignificantBit import mostSignificantBit
 from sdkcore import MaxUint256
 
 def mulShift (val: int, mulBy: int) -> int:

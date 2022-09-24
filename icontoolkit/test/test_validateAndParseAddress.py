@@ -1,5 +1,6 @@
 import unittest
-from ..validateAndParseAddress import validateAndParseAddress
+
+from icontoolkit.validateAndParseAddress import validateAndParseAddress
 
 class TestValidateAndParseAddress(unittest.TestCase):
 

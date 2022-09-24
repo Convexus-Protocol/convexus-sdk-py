@@ -1,5 +1,5 @@
 import unittest
-from ..tickMath import TickMath 
+from sdk.utils.tickMath import TickMath 
 
 class TestGetSqrtRatioAtTick(unittest.TestCase):
 

@@ -1,6 +1,7 @@
 from typing import List
-from .validateAndParseAddress import validateAndParseAddress
 import json
+
+from icontoolkit.validateAndParseAddress import validateAndParseAddress
 
 class Interface:
 

@@ -1,12 +1,13 @@
 from typing import List
 from iconsdk.icon_service import IconService
 from functools import partial
-from .interface import Interface
 from iconsdk.wallet.wallet import KeyWallet
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.builder.call_builder import CallBuilder
 import time
+
+from icontoolkit.interface import Interface
 
 class Contract(object):
   
