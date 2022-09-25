@@ -18,9 +18,9 @@ toFixedRounding = {
 
 class Fraction:
 
-  def __init__(self, numerator: int, denominator: int = 1):
-    self.numerator = numerator
-    self.denominator = denominator
+  def __init__(self, numerator: BigintIsh, denominator: BigintIsh = 1):
+    self.numerator = BigInt(numerator)
+    self.denominator = BigInt(denominator)
 
   def __eq__(self, __o) -> bool:
     return self.numerator == __o.numerator and self.denominator == __o.denominator
@@ -91,9 +91,21 @@ class Fraction:
 
   def toFixed(self, decimalPlaces: int, rounding: Rounding = Rounding.ROUND_HALF_UP) -> str:
     assert decimalPlaces >= 0, f"{decimalPlaces} is negative."
-    getcontext().prec = decimalPlaces + 1
+    getcontext().prec = 256
     getcontext().rounding = toFixedRounding[rounding]
-    return str(Decimal(self.numerator) / Decimal(self.denominator))
+    d = Decimal(self.numerator) / Decimal(self.denominator)
+    formatted = ("{:." + str(decimalPlaces) + "f}").format(d)
+
+    # Remove trailing zeroes
+    numbers = formatted.split('.')
+    if len(numbers) == 1:
+      return formatted
+
+    rnumbers = numbers[1].rstrip("0")
+    if len(rnumbers) == 0:
+      return numbers[0]
+
+    return numbers[0] + '.' + rnumbers
 
   @property
   def asFraction(self) -> 'Fraction':
