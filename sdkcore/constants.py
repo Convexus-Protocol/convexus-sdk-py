@@ -9,4 +9,4 @@ class Rounding(Enum):
   ROUND_HALF_UP = 1
   ROUND_UP = 2
 
-MaxUint256 = 2**256
+MaxUint256 = (2**256)-1

@@ -1,4 +1,4 @@
-from .currency import Currency, NativeCurrency, Token
+from sdkcore.entities.currency import Currency, NativeCurrency, Token
 
 class Icx(NativeCurrency):
   """

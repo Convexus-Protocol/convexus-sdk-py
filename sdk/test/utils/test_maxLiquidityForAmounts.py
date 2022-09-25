@@ -1,6 +1,7 @@
 import unittest
 
-from sdk.utils import encodeSqrtRatioX96, maxLiquidityForAmounts
+from sdk.utils.encodeSqrtRatioX96 import encodeSqrtRatioX96
+from sdk.utils.maxLiquidityForAmounts import maxLiquidityForAmounts
 from sdkcore.constants import MaxUint256
 
 class TestEncodeSqrtRatioX96(unittest.TestCase):
@@ -80,7 +81,7 @@ class TestEncodeSqrtRatioX96(unittest.TestCase):
           200,
           False
         ), 
-      1214437677402049537867770675689825446306618235148421502747047340104175905226817
+      1214437677402049537867770675689825446306618235148421502747047340104175905226807
     )
 
   def test_100Token0200Token1_2(self):
@@ -106,7 +107,7 @@ class TestEncodeSqrtRatioX96(unittest.TestCase):
           MaxUint256,
           False
         ),
-      1214437677402049395210666424382790702218161189832585414652320869013789600108433
+      1214437677402049395210666424382790702218161189832585414652320869013789600108423
     )
 
   def test_maxToken0200Token1_3(self):
@@ -198,7 +199,7 @@ class TestEncodeSqrtRatioX96(unittest.TestCase):
           200,
           True
         ), 
-      1214437677402049537867770675696771108746709892686845009503743929281911097914511
+      1214437677402049537867770675696771108746709892686845009503743929281911097914501
     )
       
     
@@ -225,7 +226,7 @@ class TestEncodeSqrtRatioX96(unittest.TestCase):
           MaxUint256,
           True
         ), 
-      1214437677402049395210666424382790702218161189832585414652320869013789600108433
+      1214437677402049395210666424382790702218161189832585414652320869013789600108423
     )
       
   def test_maxToken0200Token1_2(self):

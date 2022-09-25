@@ -1,7 +1,9 @@
-from typing import List
+from typing import Dict, List
 import json
 
 from icontoolkit.validateAndParseAddress import validateAndParseAddress
+
+CallData = Dict
 
 class Interface:
 
