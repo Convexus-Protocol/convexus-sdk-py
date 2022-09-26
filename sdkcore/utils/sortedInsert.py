@@ -15,7 +15,7 @@ def sortedInsert(items: List, add, maxSize: int, comparator):
     items.append(add)
     return None
   else:
-    isFull = len(items) == maxSize
+    isFull = (len(items) == maxSize)
     # short circuit if full and the additional item does not come before the last item
     if isFull and comparator(items[len(items) - 1], add) <= 0:
       return add
@@ -30,5 +30,5 @@ def sortedInsert(items: List, add, maxSize: int, comparator):
       else:
         hi = mid
 
-    items = items[0:lo] + [add] + items[lo:]
+    items.insert(lo, add)
     return items.pop() if isFull else None

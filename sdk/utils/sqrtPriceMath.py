@@ -6,11 +6,11 @@ MaxUint160 = 2**160 - 1
 
 def multiplyIn256(x: int, y: int) -> int:
   product = x * y
-  return product | MaxUint256
+  return product & MaxUint256
 
 def addIn256(x: int, y: int) -> int:
   sum = x + y
-  return sum | MaxUint256
+  return sum & MaxUint256
 
 from abc import ABCMeta
 
@@ -88,7 +88,7 @@ class SqrtPriceMath(metaclass=ABCMeta):
     else:
       product = multiplyIn256(amount, sqrtPX96)
       assert (product // amount) == sqrtPX96
-      assert numerator1 == product
+      assert numerator1 > product
       denominator = numerator1 - product
       return FullMath.mulDivRoundingUp(numerator1, sqrtPX96, denominator)
   

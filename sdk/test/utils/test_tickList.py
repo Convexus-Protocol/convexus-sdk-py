@@ -1,6 +1,6 @@
 import unittest
 from sdk.utils.tickMath import TickMath 
-from sdk.entities.tick import Tick
+from sdk.entities.tick import Tick, TickConstructorArgs
 from sdk.utils.tickList import TickList
 
 class TestTickList(unittest.TestCase):
@@ -8,9 +8,22 @@ class TestTickList(unittest.TestCase):
   def setUp(self) -> None:
     super().setUp()
     
-    self.lowTick = Tick(TickMath.MIN_TICK + 1, 10, 10)
-    self.midTick = Tick(0, 5, -5)
-    self.highTick = Tick(TickMath.MAX_TICK - 1, 5, -5)
+    self.lowTick = Tick(TickConstructorArgs(
+      index=TickMath.MIN_TICK + 1,
+      liquidityNet=10,
+      liquidityGross=10
+    ))
+    self.midTick = Tick(TickConstructorArgs(
+      index=0,
+      liquidityNet=-5,
+      liquidityGross=5
+    ))
+    self.highTick = Tick(TickConstructorArgs(
+      index=TickMath.MAX_TICK - 1,
+      liquidityNet=-5,
+      liquidityGross=5
+    ))
+
     self.ticks = [self.lowTick, self.midTick, self.highTick]
   
   def test_validate_errorsForIncompleteLists(self):
@@ -93,8 +106,19 @@ class TestTickList(unittest.TestCase):
     self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 256, False, 1), [511, False])
       
   def test_nextInitializedTickWithinOneWord_PerformsCorrectlyWithTickSpacing1(self):
-    ticks = [Tick(0, 0, 0), Tick(511, 0, 0)]
-    
+    ticks = [
+      Tick(TickConstructorArgs(
+        index=0, 
+        liquidityNet=0,
+        liquidityGross=0
+      )),
+      Tick(TickConstructorArgs(
+        index=511,
+        liquidityNet=0,
+        liquidityGross=0
+      ))
+    ]
+
     self.assertEqual(TickList.nextInitializedTickWithinOneWord(ticks, 0, False, 1), [255, False])
     self.assertEqual(TickList.nextInitializedTickWithinOneWord(ticks, 0, False, 2), [510, False])
 

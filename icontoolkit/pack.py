@@ -1,9 +1,9 @@
-from validateAndParseAddress import isAddress
+from icontoolkit.validateAndParseAddress import isAddress
 from iconsdk.utils.validation import is_wallet_address
 import struct
 
 def uint32ToBytes(num: int):
-  return struct.unpack("4b", struct.pack(">I", num))
+  return int.to_bytes(num, 4, "big")
 
 def addressToBytes (address: str):
   if not isAddress(address):
@@ -28,14 +28,19 @@ def packSingle (type: str, value):
     raise Exception(f"invalid type : {type}")
 
 def concat (arrays):
-  result = []
+  result = bytearray()
   for array in arrays:
     result += array
   return result
 
 def pack (types, values):
-  if types.length != values.length:
-    raise Exception(f"Wrong number of values; expected {types.length}, got {values.length}")
+  if not types:
+    types = []
+  if not values:
+    values = []
+  
+  if len(types) != len(values):
+    raise Exception(f"Wrong number of values; expected {len(types)}, got {len(values)}")
 
   tight = []
 

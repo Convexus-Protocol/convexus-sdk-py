@@ -6,6 +6,7 @@ from iconsdk.builder.transaction_builder import CallTransactionBuilder
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.builder.call_builder import CallBuilder
 import time
+from icontoolkit.calldata import toHex
 
 from icontoolkit.interface import Interface
 
@@ -54,7 +55,7 @@ class Contract(object):
       .timestamp(int(time.time()) * 1000 * 1000)
 
     if icxAmount > 0:
-      txObjBuilder.value(hex(icxAmount))
+      txObjBuilder.value(toHex(icxAmount))
     
     txObjEstimate = txObjBuilder.build()
 

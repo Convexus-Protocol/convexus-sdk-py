@@ -1,4 +1,6 @@
-from sdkcore.entities import CurrencyAmount, Percent, Price
+from sdkcore.entities.fractions.currencyAmount import CurrencyAmount
+from sdkcore.entities.fractions.percent import Percent
+from sdkcore.entities.fractions.price import Price
 
 def computePriceImpact (
   midPrice: Price,

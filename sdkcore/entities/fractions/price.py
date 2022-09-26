@@ -1,4 +1,4 @@
-from icontoolkit import BigintIsh
+from icontoolkit.constants import BigintIsh
 from sdkcore.constants import Rounding
 from sdkcore.entities.currency import Currency
 from sdkcore.entities.fractions.fraction import Fraction

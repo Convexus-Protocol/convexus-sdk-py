@@ -1,5 +1,8 @@
 from typing import Dict, List
 import json
+from icontoolkit.BigInt import BigInt
+from icontoolkit.calldata import toHex
+from icontoolkit.constants import BigintIsh
 
 from icontoolkit.validateAndParseAddress import validateAndParseAddress
 
@@ -33,7 +36,7 @@ class Interface:
       result[input['name']] = address
 
     elif inputType == "int":
-      result[input['name']] = hex(value)
+      result[input['name']] = toHex(value)
 
     elif inputType == "str":
       result[input['name']] = value
@@ -46,7 +49,8 @@ class Interface:
 
     return result
 
-  def encodeFunctionDataPayable (self, icxAmount: int, method: str, values: List = None):
+  def encodeFunctionDataPayable (self, icxAmount: BigintIsh, method: str, values: List = None):
+    icxAmount = BigInt(icxAmount)
     abiObject = self.getAbiObject(method)
     inputs = abiObject['inputs']
     if values is None:
@@ -60,7 +64,7 @@ class Interface:
     }
     
     if icxAmount > 0:
-      payload["value"] = hex(icxAmount)
+      payload["value"] = toHex(icxAmount)
 
     if len(inputs):
       payload["params"] = {}
@@ -72,7 +76,8 @@ class Interface:
   def encodeFunctionData (self, method, *values):
     return self.encodeFunctionDataPayable(0, method, *values)
   
-  def encodeTokenFallbackFunctionData (self, token: str, amount: int, method: str, inputs, values):
+  def encodeTokenFallbackFunctionData (self, token: str, amount: BigintIsh, method: str, inputs, values):
+    amount = BigInt(amount)
     assert len(inputs) == len(values), f"INVALID_ARGS_COUNT (expected ${len(inputs)}, got ${len(values)})"
     
     tokenFallbackPayload = {
@@ -90,7 +95,7 @@ class Interface:
       "method": "transfer",
       "params": {
         "_to": self.contractAddress,
-        "_value": hex(amount),
+        "_value": toHex(amount),
         "_data": "0x" + json.dumps(tokenFallbackPayload).encode().hex()
       }
     }

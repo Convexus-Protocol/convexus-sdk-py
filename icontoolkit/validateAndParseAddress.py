@@ -6,7 +6,7 @@ def isEoaAddress(address):
   * @param {any} address - the input value.
   * @return {boolean} returns true if the input value is a EOA address.
   """
-  return re.match(r"^(hx)[0-9a-f]{40}$", address) and re.match(r"\S", address); 
+  return re.match(r"^(hx)[0-9a-f]{40}$", address) and re.match(r"\S", address)
   
 def isScoreAddress(address):
   """
@@ -14,7 +14,7 @@ def isScoreAddress(address):
   * @param {any} address - the input value. 
   * @return {boolean} returns true if the input value is a SCORE address. 
   """
-  return re.match(r"^(cx)[0-9a-f]{40}$", address) and re.match(r"\S", address); 
+  return re.match(r"^(cx)[0-9a-f]{40}$", address) and re.match(r"\S", address)
   
 def isAddress(address):
   """ 

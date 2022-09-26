@@ -3,33 +3,34 @@ from typing import Union
 
 from icontoolkit.validateAndParseAddress import validateAndParseAddress
 
-"""
- * A currency is any fungible financial instrument, including ICX, all IRC2 tokens, and other chain-native currencies
-"""
 class BaseCurrency(metaclass=ABCMeta):
   """
-   * Returns whether the currency is native to the chain and must be wrapped (e.g. ICX)
+  * A currency is any fungible financial instrument, including ICX, all IRC2 tokens, and other chain-native currencies
   """
+
   @property
   @abstractmethod
   def isNative(self) -> bool:
+    """
+    * Returns whether the currency is native to the chain and must be wrapped (e.g. ICX)
+    """
     pass
 
-  """
-   * Returns whether the currency is a token that is usable in Convexus without wrapping
-  """
   @property
   @abstractmethod
   def isToken(self) -> bool:
+    """
+    * Returns whether the currency is a token that is usable in Convexus without wrapping
+    """
     pass
 
-  """
-   * Constructs an instance of the base class `BaseCurrency`.
-   * @param decimals decimals of the currency
-   * @param symbol symbol of the currency
-   * @param name of the currency
-  """
   def __init__(self, decimals: int, symbol: str = None, name: str = None):
+    """
+    * Constructs an instance of the base class `BaseCurrency`.
+    * @param decimals decimals of the currency
+    * @param symbol symbol of the currency
+    * @param name of the currency
+    """
     assert decimals >= 0 and decimals < 255 and isinstance(decimals, int), 'DECIMALS'
 
     """
@@ -47,30 +48,31 @@ class BaseCurrency(metaclass=ABCMeta):
     """
     self.name = name
 
-  """
-   * Returns whether this currency is functionally equivalent to the other currency
-   * @param other the other currency
-  """
   @abstractmethod
   def equals(self, other: 'Currency') -> bool:
+    """
+    * Returns whether this currency is functionally equivalent to the other currency
+    * @param other the other currency
+    """
     pass
 
   def __eq__(self, __o) -> bool:
     return self.equals(__o)
 
-  """
-   * Return the wrapped version of this currency that can be used with the Convexus contracts. Currencies must
-   * implement this to be used in Convexus
-  """
   @property
   @abstractmethod
   def wrapped(self) -> 'Token':
+    """
+    * Return the wrapped version of this currency that can be used with the Convexus contracts. Currencies must
+    * implement this to be used in Convexus
+    """
     pass
 
-"""
- * Represents the native currency of the chain on which it resides, e.g.
-"""
 class NativeCurrency (BaseCurrency, metaclass=ABCMeta):
+  """
+  * Represents the native currency of the chain on which it resides, e.g.
+  """
+  
   @property
   def isNative(self) -> bool:
     return True

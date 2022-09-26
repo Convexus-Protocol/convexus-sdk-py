@@ -1,4 +1,5 @@
 from typing import List
+from icontoolkit.calldata import toHex
 from icontoolkit.interface import Interface, CallData
 from sdk.entities.pool import Pool
 
@@ -17,7 +18,7 @@ class PoolInitializer:
       pool.token0.address,
       pool.token1.address,
       pool.fee,
-      hex(pool.sqrtRatioX96)
+      toHex(pool.sqrtRatioX96)
     ])
 
   @staticmethod
