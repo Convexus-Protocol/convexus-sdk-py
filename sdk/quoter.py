@@ -1,4 +1,5 @@
 from abc import ABCMeta
+from dataclasses import dataclass
 from typing import List, NamedTuple
 from icontoolkit.calldata import toHex
 
@@ -12,8 +13,8 @@ from sdk.entities.route import Route
 from sdk.artifacts.contracts.Quoter.Quoter import IQuoter
 from sdk.utils.encodeRouteToPath import encodeRouteToPath
 
-
-class QuoteOptions(NamedTuple):
+@dataclass
+class QuoteOptions:
   """
   * Optional arguments to send to the quoter.
   """
@@ -21,7 +22,7 @@ class QuoteOptions(NamedTuple):
   """
    * The optional price limit for the trade.
   """
-  sqrtPriceLimitX96: BigintIsh | None
+  sqrtPriceLimitX96: BigintIsh | None = None
 
 """
  * Represents the Convexus Quoter contract with a method for returning the formatted

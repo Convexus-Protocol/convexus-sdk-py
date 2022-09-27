@@ -1,5 +1,5 @@
-from typing import List, NamedTuple, Tuple, cast
-from recordclass import RecordClass
+from dataclasses import dataclass
+from typing import List, Tuple, cast
 from icontoolkit.BigInt import BigInt
 from icontoolkit.constants import BigintIsh
 from sdkcore.entities.fractions.price import Price
@@ -16,7 +16,8 @@ from sdk.utils.swapMath import SwapMath
 from sdk.utils.liquidityMath import LiquidityMath
 from collections.abc import Sequence
 
-class StepComputations(RecordClass):
+@dataclass
+class StepComputations:
   sqrtPriceStartX96: int
   tickNext: int
   initialized: bool
@@ -25,7 +26,8 @@ class StepComputations(RecordClass):
   amountOut: int
   feeAmount: int
 
-class SwapResult (NamedTuple):
+@dataclass
+class SwapResult:
   amountCalculated: int
   sqrtRatioX96: int
   liquidity: int
@@ -66,7 +68,7 @@ class Pool:
 
     # Convert params
     sqrtRatioX96 = BigInt(sqrtRatioX96)
-    liquidity = BigInt(sqrtRatioX96)
+    liquidity = BigInt(liquidity)
 
     tickCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent)
     nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent + 1)
@@ -81,8 +83,11 @@ class Pool:
     self.tickCurrent = tickCurrent
     self.tickDataProvider = TickListDataProvider(ticks, TICK_SPACINGS[fee]) if isinstance(ticks, Sequence) else ticks
     self.poolFactoryProvider = poolFactoryProvider
-    self._token0Price: Price | None = None
-    self._token1Price: Price | None = None
+    self.__token0Price: Price | None = None
+    self.__token1Price: Price | None = None
+
+  def __repr__(self) -> str:
+    return str(self.__dict__)
 
   def __eq__(self, __o) -> bool:
     return self.token0 == __o.token0 and self.token1 == __o.token1 and self.fee == __o.fee
@@ -104,30 +109,30 @@ class Pool:
     """
     * Returns the current mid price of the pool in terms of token0, i.e. the ratio of token1 over token0
     """
-    if not self._token0Price:
-      self._token0Price = Price (
+    if not self.__token0Price:
+      self.__token0Price = Price (
         self.token0,
         self.token1,
         Q192,
         self.sqrtRatioX96 * self.sqrtRatioX96
       )
 
-    return self._token0Price
+    return self.__token0Price
 
   @property
   def token1Price(self) -> Price:
     """
     * Returns the current mid price of the pool in terms of token1, i.e. the ratio of token0 over token1
     """
-    if not self._token1Price:
-      self._token1Price = Price (
+    if not self.__token1Price:
+      self.__token1Price = Price (
         self.token1,
         self.token0,
         self.sqrtRatioX96 * self.sqrtRatioX96,
         Q192
       )
 
-    return self._token1Price
+    return self.__token1Price
 
   def priceOf(self, token: Token) -> Price:
     """
@@ -153,11 +158,16 @@ class Pool:
 
     zeroForOne = inputAmount.currency.equals(self.token0)
 
-    outputAmount, sqrtRatioX96, liquidity, tickCurrent = self.swap (
+    result = self.swap (
       zeroForOne,
       inputAmount.quotient,
       sqrtPriceLimitX96
     )
+
+    outputAmount = result.amountCalculated
+    sqrtRatioX96 = result.sqrtRatioX96
+    liquidity = result.liquidity
+    tickCurrent = result.tickCurrent
 
     outputToken = self.token1 if zeroForOne else self.token0
     return (
@@ -180,12 +190,17 @@ class Pool:
 
     zeroForOne = outputAmount.currency.equals(self.token1)
 
-    inputAmount, sqrtRatioX96, liquidity, tickCurrent = self.swap (
+    result = self.swap (
       zeroForOne,
       outputAmount.quotient * -1,
       sqrtPriceLimitX96
     )
 
+    inputAmount = result.amountCalculated
+    sqrtRatioX96 = result.sqrtRatioX96
+    liquidity = result.liquidity
+    tickCurrent = result.tickCurrent
+    
     inputToken = self.token0 if zeroForOne else self.token1
 
     return (
@@ -225,7 +240,8 @@ class Pool:
     exactInput = amountSpecified >= 0
 
     # keep track of swap state
-    class SwapState(RecordClass):
+    @dataclass
+    class SwapState:
       amountSpecifiedRemaining: int
       amountCalculated: int
       sqrtPriceX96: int
@@ -263,7 +279,8 @@ class Pool:
 
       step.sqrtPriceNextX96 = TickMath.getSqrtRatioAtTick(step.tickNext)
       state.sqrtPriceX96, step.amountIn, step.amountOut, step.feeAmount = SwapMath.computeSwapStep (
-        state.sqrtPriceX96, sqrtPriceLimitX96 if direction else step.sqrtPriceNextX96,
+        state.sqrtPriceX96, 
+        sqrtPriceLimitX96 if direction else step.sqrtPriceNextX96,
         state.liquidity,
         state.amountSpecifiedRemaining,
         self.fee

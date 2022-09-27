@@ -1,7 +1,8 @@
 from abc import ABCMeta
-from typing import NamedTuple
+from dataclasses import dataclass
 
-class FeeGrowthOutside(NamedTuple):
+@dataclass
+class FeeGrowthOutside:
   feeGrowthOutside0X128: int
   feeGrowthOutside1X128: int
 

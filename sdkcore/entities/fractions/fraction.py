@@ -23,7 +23,7 @@ class Fraction:
     self.denominator = BigInt(denominator)
 
   def __eq__(self, __o) -> bool:
-    return self.numerator == __o.numerator and self.denominator == __o.denominator
+    return __o is not None and self.equalTo(__o)
 
   @staticmethod
   def tryParseFraction (fractionish: Union[BigintIsh, 'Fraction']) -> 'Fraction':

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import json
 from abc import ABCMeta
 from functools import reduce
@@ -8,17 +9,8 @@ from icontoolkit.calldata import toHex
 from icontoolkit.constants import BigintIsh
 from icontoolkit.interface import CallData, Interface
 from icontoolkit.validateAndParseAddress import validateAndParseAddress
+from sdkcore.entities.currency import Token
 
-from sdkcore.entities.icx import Icx
-from sdkcore.entities.fractions.percent import Percent
-from sdkcore.entities.fractions.currencyAmount import CurrencyAmount
-from sdkcore.entities.currency import NativeCurrency, Token
-from sdkcore.constants import TradeType
-
-from sdk.entities.position import Position, PositionConstructorArgs
-from sdk.entities.route import Route
-from sdk.artifacts.contracts.Quoter.Quoter import IQuoter
-from sdk.utils.encodeRouteToPath import encodeRouteToPath
 from sdk.entities.factoryProvider import PoolFactoryProvider
 from sdk.entities.pool import Pool
 
@@ -27,7 +19,9 @@ from sdk.artifacts.contracts.ConvexusStaker.ConvexusStaker import IConvexusStake
 from collections.abc import Sequence
 
 # ClaimOptions & WithdrawOptions
-class FullWithdrawOptions(NamedTuple):
+
+@dataclass
+class FullWithdrawOptions:
   """
    * The id of the NFT
   """
@@ -39,22 +33,23 @@ class FullWithdrawOptions(NamedTuple):
   recipient: str
 
   """
-   * The amount of `rewardToken` to claim. 0 claims all.
-  """
-  amount: BigintIsh | None
-
-  """
    * Set when withdrawing. The position will be sent to `owner` on withdraw.
   """
   owner: str
 
   """
+   * The amount of `rewardToken` to claim. 0 claims all.
+  """
+  amount: BigintIsh | None = None
+
+  """
    * Set when withdrawing. `data` is passed to `safeTransferFrom` when transferring the position from contract back to owner.
   """
-  data: str | None
+  data: str | None = None
 
 
-class IncentiveKey(NamedTuple):
+@dataclass
+class IncentiveKey:
   """
   * Represents a unique staking program.
   """
@@ -80,7 +75,8 @@ class IncentiveKey(NamedTuple):
   """
   refundee: str
 
-class ClaimOptions(NamedTuple):
+@dataclass
+class ClaimOptions:
   """
   * Options to specify when claiming rewards.
   """
@@ -98,9 +94,10 @@ class ClaimOptions(NamedTuple):
   """
    * The amount of `rewardToken` to claim. 0 claims all.
   """
-  amount: BigintIsh | None
+  amount: BigintIsh | None = None
 
-class WithdrawOptions(NamedTuple):
+@dataclass
+class WithdrawOptions:
   """
   * Options to specify when withdrawing a position.
   """
@@ -240,7 +237,7 @@ class Staker(metaclass=ABCMeta):
       data = [Staker._encodeIncentiveKey(poolFactoryProvider, incentiveKeys[0])]
 
     # FIXME: RLP encode instead of JSON encode
-    return "0x" + json.dumps(data).encode('utf-8').hex()
+    return "0x" + json.dumps(data, separators=(',', ':')).encode('utf-8').hex()
 
   @staticmethod
   def _encodeIncentiveKey(

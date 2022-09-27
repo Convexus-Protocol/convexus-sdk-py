@@ -65,7 +65,7 @@ class TestCurrencyAmount(unittest.TestCase):
 
   def test_isCorrectFor18Decimals_1(self):
     token = Token(ADDRESS_ONE, 18)
-    amount = CurrencyAmount.fromRawAmount(token, 1e15)
+    amount = CurrencyAmount.fromRawAmount(token, int(1e15))
     self.assertEqual(amount.toFixed(9), '0.001')
 
   def test_doesNotThrowForSigFigsGtCurrencyDecimals_0(self):
@@ -80,7 +80,7 @@ class TestCurrencyAmount(unittest.TestCase):
 
   def test_isCorrectFor18Decimals_0(self):
     token = Token(ADDRESS_ONE, 18)
-    amount = CurrencyAmount.fromRawAmount(token, 123e13)
+    amount = CurrencyAmount.fromRawAmount(token, int(123e13))
     self.assertEqual(amount.toExact(), '0.00123')
 
 

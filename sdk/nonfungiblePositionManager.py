@@ -1,5 +1,6 @@
 from abc import ABCMeta
-from typing import List, NamedTuple, Union, cast
+from dataclasses import dataclass
+from typing import List, Union, cast
 from icontoolkit.BigInt import BigInt
 from icontoolkit.calldata import toHex
 
@@ -17,22 +18,23 @@ from sdk.artifacts.contracts.NonfungiblePositionManager.NonfungiblePositionManag
 
 MaxUint128 = toHex((2**128) - 1)
 
-
-class MintSpecificOptions(NamedTuple):
+@dataclass
+class MintSpecificOptions:
   """
    * The account that should receive the minted NFT.
   """
   recipient: str
 
-
-class IncreaseSpecificOptions(NamedTuple):
+@dataclass
+class IncreaseSpecificOptions:
   """
    * Indicates the ID of the position to increase liquidity for.
   """
   tokenId: BigintIsh
 
 
-class CommonAddLiquidityOptions(NamedTuple):
+@dataclass
+class CommonAddLiquidityOptions:
   """
   * Options for producing the calldata to add liquidity.
   """
@@ -53,7 +55,8 @@ class CommonAddLiquidityOptions(NamedTuple):
   useNative: NativeCurrency | None
 
 # CommonAddLiquidityOptions & MintSpecificOptions
-class MintOptions(NamedTuple):
+@dataclass
+class MintOptions:
   """
   * Options for producing the calldata to add liquidity.
   """
@@ -68,18 +71,19 @@ class MintOptions(NamedTuple):
   """
   deadline: BigintIsh
 
-  """
-   * Whether to spend ICX. If true, one of the pool tokens must be WICX, by default false
-  """
-  useNative: NativeCurrency | None
-  
   """
    * The account that should receive the minted NFT.
   """
   recipient: str
 
+  """
+   * Whether to spend ICX. If true, one of the pool tokens must be WICX, by default false
+  """
+  useNative: NativeCurrency | None = None
+  
 # CommonAddLiquidityOptions & IncreaseSpecificOptions
-class IncreaseOptions(NamedTuple):
+@dataclass
+class IncreaseOptions:
   """
   * Options for producing the calldata to add liquidity.
   """
@@ -95,19 +99,20 @@ class IncreaseOptions(NamedTuple):
   deadline: BigintIsh
 
   """
-   * Whether to spend ICX. If true, one of the pool tokens must be WICX, by default false
-  """
-  useNative: NativeCurrency | None
-
-  """
    * Indicates the ID of the position to increase liquidity for.
   """
   tokenId: BigintIsh
-  
 
+  """
+   * Whether to spend ICX. If true, one of the pool tokens must be WICX, by default false
+  """
+  useNative: NativeCurrency | None = None
+
+  
 AddLiquidityOptions = Union[MintOptions, IncreaseOptions]
 
-class SafeTransferOptions(NamedTuple):
+@dataclass
+class SafeTransferOptions:
   """
    * The account sending the NFT.
   """
@@ -122,16 +127,18 @@ class SafeTransferOptions(NamedTuple):
    * The id of the token being sent.
   """
   tokenId: BigintIsh
+
   """
    * The optional parameter that passes data to the `onERC721Received` call for the staker
   """
-  data: str | None
+  data: str | None = None
 
 # type guard
 def isMint(options: AddLiquidityOptions) -> bool:
-  return any(map(lambda f: f == 'recipient', options._fields))
+  return any(map(lambda f: f == 'recipient', options.__dataclass_fields__))
 
-class CollectOptionsNoTokenId(NamedTuple):
+@dataclass
+class CollectOptionsNoTokenId:
   """
    * Expected value of tokensOwed0, including as-of-yet-unaccounted-for fees/liquidity value to be burned
   """
@@ -147,7 +154,8 @@ class CollectOptionsNoTokenId(NamedTuple):
   """
   recipient: str
 
-class CollectOptions(NamedTuple):
+@dataclass
+class CollectOptions:
   """
    * Indicates the ID of the position to collect for.
   """
@@ -167,13 +175,15 @@ class CollectOptions(NamedTuple):
   """
   recipient: str
 
-class NFTPermitOptions(NamedTuple):
+@dataclass
+class NFTPermitOptions:
   v: int
   r: str
   s: str
   deadline: int
   spender: str
 
+@dataclass
 class RemoveLiquidityOptions:
   """
   * Options for producing the calldata to exit a position.
@@ -200,19 +210,19 @@ class RemoveLiquidityOptions:
   deadline: BigintIsh
 
   """
+   * Parameters to be passed on to collect
+  """
+  collectOptions: CollectOptionsNoTokenId
+
+  """
    * Whether the NFT should be burned if the entire position is being exited, by default false.
   """
-  burnToken: bool | None
+  burnToken: bool | None = None
 
   """
    * The optional permit of the token ID being exited, in case the exit transaction is being sent by an account that does not own the NFT
   """
-  permit: NFTPermitOptions | None
-
-  """
-   * Parameters to be passed on to collect
-  """
-  collectOptions: CollectOptionsNoTokenId
+  permit: NFTPermitOptions | None = None
 
 
 class NonfungiblePositionManager(metaclass=ABCMeta):

@@ -1,6 +1,6 @@
-from typing import List
+from typing import Any, Callable, List
 
-def sortedInsert(items: List, add, maxSize: int, comparator):
+def sortedInsert(items: List[Any], add: Any, maxSize: int, comparator: Callable[[Any, Any], int]) -> Any | None:
   """
     Given an array of items sorted by `comparator`, 
     insert an item into its sort index and constrain the size to

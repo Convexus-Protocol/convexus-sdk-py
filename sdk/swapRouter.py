@@ -2,6 +2,7 @@
  * Options for producing the arguments to send calls to the router.
 """
 from abc import ABCMeta
+from dataclasses import dataclass
 from icontoolkit.calldata import toHex
 from sdk.entities.route import Route
 
@@ -9,7 +10,7 @@ from sdk.payments import FeeOptions
 from sdk.constants import ADDRESS_ZERO
 
 from collections.abc import Sequence
-from typing import List, NamedTuple
+from typing import List
 
 from icontoolkit.constants import BigintIsh
 from icontoolkit.interface import CallData, Interface
@@ -23,7 +24,8 @@ from sdk.artifacts.contracts.SwapRouter.SwapRouter import ISwapRouter
 from sdk.entities.trade import Trade
 from sdk.utils.encodeRouteToPath import encodeRouteToPath
 
-class SwapOptions(NamedTuple):
+@dataclass
+class SwapOptions:
   """
    * How much the execution price is allowed to move unfavorably from the trade execution price.
   """

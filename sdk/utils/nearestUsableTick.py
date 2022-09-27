@@ -1,4 +1,5 @@
 from sdk.utils.tickMath import TickMath
+import math
 
 def nearestUsableTick (tick: int, tickSpacing: int):
   """
@@ -10,7 +11,12 @@ def nearestUsableTick (tick: int, tickSpacing: int):
   assert tickSpacing > 0, 'TICK_SPACING'
   assert tick >= TickMath.MIN_TICK and tick <= TickMath.MAX_TICK, 'TICK_BOUND'
 
-  rounded = round(tick / tickSpacing) * tickSpacing
+  def _round(n):
+    if n - math.floor(n) < 0.5:
+      return math.floor(n)
+    return math.ceil(n)
+
+  rounded = _round(tick / tickSpacing) * tickSpacing
 
   if rounded < TickMath.MIN_TICK:
     return rounded + tickSpacing

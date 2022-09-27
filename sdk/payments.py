@@ -1,7 +1,8 @@
-from typing import NamedTuple
+from dataclasses import dataclass
 from sdkcore.entities.fractions.percent import Percent
 
-class FeeOptions(NamedTuple):
+@dataclass
+class FeeOptions:
   """
    * The percent of the output that will be taken as a fee.
   """

@@ -20,6 +20,9 @@ class Percent(Fraction):
     """ This boolean prevents a fraction from being interpreted as a Percent"""
     self.isPercent = True
   
+  def __repr__(self) -> str:
+    return str(self.__dict__)
+
   def add(self, other: Fraction | BigintIsh) -> 'Percent':
     return toPercent(super().add(other))
 

@@ -23,11 +23,17 @@ class CurrencyAmount(Fraction):
   ) -> 'CurrencyAmount':
     return CurrencyAmount(currency, numerator, denominator)
 
+  def __repr__(self) -> str:
+    return str(self.__dict__)
+
+  def __eq__(self, __o) -> bool:
+    return super().__eq__(__o) and self.currency.equals(__o.currency) and self.decimalScale == __o.decimalScale
+
   def __init__(self, currency: Currency, numerator: BigintIsh, denominator: BigintIsh = 1):
     super().__init__(numerator, denominator)
     assert self.quotient <= MaxUint256, 'AMOUNT'
-    self.currency = currency
-    self.decimalScale = 10**currency.decimals
+    self.currency: Currency = currency
+    self.decimalScale: int = 10**currency.decimals
 
   def add(self, other: 'CurrencyAmount') -> 'CurrencyAmount': # type: ignore[override]
     assert self.currency.equals(other.currency), 'CURRENCY'

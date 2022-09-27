@@ -1,6 +1,6 @@
 from abc import ABCMeta
-from typing import List, NamedTuple
-from recordclass import RecordClass
+from dataclasses import dataclass
+from typing import List, NamedTuple, Tuple
 
 from sdk.constants import FeeAmount
 from sdk.utils.sqrtPriceMath import SqrtPriceMath
@@ -10,7 +10,8 @@ MAX_FEE = 10**6
 
 class SwapMath(metaclass=ABCMeta):
 
-  class ReturnValues(RecordClass):
+  @dataclass
+  class ReturnValues:
     sqrtRatioNextX96: int
     amountIn: int
     amountOut: int
@@ -24,7 +25,7 @@ class SwapMath(metaclass=ABCMeta):
     liquidity: int,
     amountRemaining: int,
     feePips: FeeAmount
-  ) -> List[int]:
+  ) -> Tuple[int, int, int, int]:
 
     returnValues = cls.ReturnValues(0, 0, 0, 0)
 

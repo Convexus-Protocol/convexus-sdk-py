@@ -1,5 +1,6 @@
 from functools import reduce
-from typing import List, NamedTuple, cast
+from typing import List, cast
+from dataclasses import dataclass
 
 from sdkcore.constants import TradeType
 from sdkcore.utils.sortedInsert import sortedInsert
@@ -17,7 +18,7 @@ from sdk.entities.pool import Pool
 def tradeComparator (
   a: 'Trade',
   b: 'Trade'
-):
+) -> int:
   """
   * Trades comparator, an extension of the input output comparator that also considers other dimensions of the trade in ranking them
   * @template Currency The input token, either ICX or an IRC-2
@@ -50,26 +51,31 @@ def tradeComparator (
     else:
       return -1
 
-class BestTradeOptions(NamedTuple):
+@dataclass
+class BestTradeOptions:
   # how many results to return
-  maxNumResults: int | None
+  maxNumResults: int = 3
   # the maximum number of hops a trade should contain
-  maxHops: int | None
+  maxHops: int = 3
 
-class RouteInfo(NamedTuple):
+@dataclass
+class RouteInfo:
   route: Route
   inputAmount: CurrencyAmount
   outputAmount: CurrencyAmount
 
-class TradeConstructorArgs(NamedTuple):
+@dataclass
+class TradeConstructorArgs:
   routes: List[RouteInfo]
   tradeType: TradeType
 
-class RouteAmount(NamedTuple):
+@dataclass
+class RouteAmount:
   route: Route
   amount: CurrencyAmount
 
-class UncheckedTradeConstructorArguments(NamedTuple):
+@dataclass
+class UncheckedTradeConstructorArguments:
   route: Route
   inputAmount: CurrencyAmount
   outputAmount: CurrencyAmount
@@ -119,25 +125,28 @@ class Trade:
     * The cached result of the input amount computation
     * @private
     """
-    self._inputAmount: CurrencyAmount | None = None
+    self.__inputAmount: CurrencyAmount | None = None
     
     """
     * The cached result of the output amount computation
     * @private
     """
-    self._outputAmount: CurrencyAmount | None = None
+    self.__outputAmount: CurrencyAmount | None = None
     
     """
     * The cached result of the computed execution price
     * @private
     """
-    self._executionPrice: Price | None = None
+    self.__executionPrice: Price | None = None
     
     """
     * The cached result of the price impact computation
     * @private
     """
-    self._priceImpact: Percent | None = None
+    self.__priceImpact: Percent | None = None
+
+  def __repr__(self) -> str:
+    return str(self.__dict__)
 
   @property
   def route(self) -> Route:
@@ -156,8 +165,8 @@ class Trade:
     """
     * The input amount for the trade assuming no slippage.
     """
-    if (self._inputAmount):
-      return self._inputAmount
+    if self.__inputAmount:
+      return self.__inputAmount
 
     inputCurrency = self.swaps[0].inputAmount.currency
     totalInputFromRoutes = reduce (lambda total, cur:
@@ -166,16 +175,16 @@ class Trade:
       CurrencyAmount.fromRawAmount(inputCurrency, 0)
     )
 
-    self._inputAmount = totalInputFromRoutes
-    return self._inputAmount
+    self.__inputAmount = totalInputFromRoutes
+    return self.__inputAmount
 
   @property
   def outputAmount(self) -> CurrencyAmount:
     """
     * The output amount for the trade assuming no slippage.
     """
-    if (self._outputAmount):
-      return self._outputAmount
+    if (self.__outputAmount):
+      return self.__outputAmount
 
     outputCurrency = self.swaps[0].outputAmount.currency
     totalOutputFromRoutes = reduce(lambda total, cur:
@@ -184,30 +193,30 @@ class Trade:
       CurrencyAmount.fromRawAmount(outputCurrency, 0)
     )
 
-    self._outputAmount = totalOutputFromRoutes
-    return self._outputAmount
+    self.__outputAmount = totalOutputFromRoutes
+    return self.__outputAmount
 
   @property
   def executionPrice(self) -> Price:
     """
     * The price expressed in terms of output amount/input amount.
     """
-    if not self._executionPrice:
-      self._executionPrice = Price (
+    if not self.__executionPrice:
+      self.__executionPrice = Price (
         self.inputAmount.currency,
         self.outputAmount.currency,
         self.inputAmount.quotient,
         self.outputAmount.quotient
       )
-    return cast(Price, self._executionPrice)
+    return cast(Price, self.__executionPrice)
 
   @property
   def priceImpact(self) -> Percent:
     """
     * Returns the percent difference between the route's mid price and the price impact
     """
-    if (self._priceImpact):
-      return self._priceImpact
+    if (self.__priceImpact):
+      return self.__priceImpact
 
     spotOutputAmount = CurrencyAmount.fromRawAmount(self.outputAmount.currency, 0)
     for swap in self.swaps:
@@ -215,8 +224,8 @@ class Trade:
       spotOutputAmount = spotOutputAmount.add(midPrice.quote(swap.inputAmount))
 
     priceImpact = spotOutputAmount.subtract(self.outputAmount).divide(spotOutputAmount)
-    self._priceImpact = Percent(priceImpact.numerator, priceImpact.denominator)
-    return self._priceImpact
+    self.__priceImpact = Percent(priceImpact.numerator, priceImpact.denominator)
+    return self.__priceImpact
 
   @staticmethod
   def exactIn (
@@ -277,7 +286,7 @@ class Trade:
       amounts[0] = amount.wrapped
       for i in range(len(route.tokenPath) - 1):
         pool = route.pools[i]
-        outputAmount, p = pool.getOutputAmount(amounts[i])
+        outputAmount, _ = pool.getOutputAmount(amounts[i])
         amounts[i + 1] = outputAmount
 
       inputAmount = CurrencyAmount.fromFractionalAmount(route.input, amount.numerator, amount.denominator)
@@ -291,15 +300,15 @@ class Trade:
       amounts[len(amounts) - 1] = amount.wrapped
       for i in range(len(route.tokenPath) - 1, 0, -1):
         pool = route.pools[i - 1]
-        inputAmount, pool = pool.getInputAmount(amounts[i])
+        inputAmount, _ = pool.getInputAmount(amounts[i])
         amounts[i - 1] = inputAmount
 
       inputAmount = CurrencyAmount.fromFractionalAmount(route.input, amounts[0].numerator, amounts[0].denominator)
       outputAmount = CurrencyAmount.fromFractionalAmount(route.output, amount.numerator, amount.denominator)
 
     trade = Trade(TradeConstructorArgs(
-      [RouteInfo(route, inputAmount, outputAmount)],
-      tradeType
+      routes=[RouteInfo(route=route, inputAmount=inputAmount, outputAmount=outputAmount)],
+      tradeType=tradeType
     ))
 
     trade.checkRoute(poolFactoryProvider)
@@ -327,12 +336,12 @@ class Trade:
     for routeAmount in routes:
       amount = routeAmount.amount
       route = routeAmount.route
-      amounts: List[CurrencyAmount] = []
+      amounts: List[CurrencyAmount] = [None] * len(route.tokenPath)
       inputAmount: CurrencyAmount
       outputAmount: CurrencyAmount
 
       if (tradeType == TradeType.EXACT_INPUT):
-        assert (amount.currency.equals(route.input), 'INPUT')
+        assert amount.currency.equals(route.input), 'INPUT'
         inputAmount = CurrencyAmount.fromFractionalAmount(route.input, amount.numerator, amount.denominator)
         amounts[0] = CurrencyAmount.fromFractionalAmount(route.input.wrapped, amount.numerator, amount.denominator)
 
@@ -347,7 +356,7 @@ class Trade:
           amounts[len(amounts) - 1].denominator
         )
       else:
-        assert (amount.currency.equals(route.output), 'OUTPUT')
+        assert amount.currency.equals(route.output), 'OUTPUT'
         outputAmount = CurrencyAmount.fromFractionalAmount(route.output, amount.numerator, amount.denominator)
         amounts[len(amounts) - 1] = CurrencyAmount.fromFractionalAmount(
           route.output.wrapped,
@@ -401,8 +410,7 @@ class Trade:
   @staticmethod
   def createUncheckedTradeWithMultipleRoutes (
     poolFactoryProvider: PoolFactoryProvider,
-    constructorArguments: UncheckedTradeConstructorArguments,
-    tradeType: TradeType
+    constructorArguments: TradeConstructorArgs
   ) -> 'Trade':
     """
     * Creates a trade without computing the result of swapping through the routes. Useful when you have simulated the trade
@@ -462,7 +470,7 @@ class Trade:
     * @param slippageTolerance The tolerance of unfavorable slippage from the execution price of this trade
     * @returns The amount in
     """
-    if not amountIn:
+    if amountIn is None:
       amountIn = self.inputAmount
 
     assert not slippageTolerance.lessThan(0), 'SLIPPAGE_TOLERANCE'
@@ -494,9 +502,9 @@ class Trade:
     currencyOut: Currency,
     options: BestTradeOptions = BestTradeOptions(3, 3),
     # used in recursion.
-    currentPools: List[Pool] = [],
+    currentPools: List[Pool] = None,
     nextAmountIn: CurrencyAmount = None,
-    bestTrades: List['Trade'] = []
+    bestTrades: List['Trade'] = None
   ) -> List['Trade']:
     """
     * Given a list of pools, and a fixed amount in, returns the top `maxNumResults` trades that go from an input token
@@ -515,6 +523,10 @@ class Trade:
     """
     if nextAmountIn is None:
       nextAmountIn = currencyAmountIn
+    if currentPools is None:
+      currentPools = []
+    if bestTrades is None:
+      bestTrades = []
 
     maxNumResults = options.maxNumResults
     maxHops = options.maxHops
@@ -554,7 +566,7 @@ class Trade:
           tradeComparator
         )
       elif (maxHops > 1 and len(pools) > 1):
-        poolsExcludingThisPool = pools.slice(0, i).concat(pools.slice(i + 1, len(pools)))
+        poolsExcludingThisPool = pools[0:i] + pools[i + 1: len(pools)]
 
         # otherwise, consider all the other paths that lead from this token as long as we have not exceeded maxHops
         Trade.bestTradeExactIn (
@@ -581,9 +593,9 @@ class Trade:
     currencyAmountOut: CurrencyAmount,
     options: BestTradeOptions = BestTradeOptions(3, 3),
     # used in recursion.
-    currentPools: List[Pool] = [],
+    currentPools: List[Pool] = None,
     nextAmountOut: CurrencyAmount = None,
-    bestTrades: List['Trade'] = []
+    bestTrades: List['Trade'] = None
   ) -> List['Trade']:
     """
     * similar to the above method but instead targets a fixed output amount
@@ -603,6 +615,12 @@ class Trade:
     """
     if nextAmountOut is None:
       nextAmountOut = currencyAmountOut
+
+    if bestTrades is None:
+      bestTrades = []
+
+    if currentPools is None:
+      currentPools = []
 
     maxNumResults = options.maxNumResults
     maxHops = options.maxHops

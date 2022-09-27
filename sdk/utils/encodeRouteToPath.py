@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from functools import reduce
 from typing import List, NamedTuple, Union
 
@@ -16,7 +17,8 @@ def encodeRouteToPath (route: Route, exactOutput: bool) -> str:
   """
   firstInputToken: Token = route.input.wrapped
 
-  class PackedPath(NamedTuple):
+  @dataclass
+  class PackedPath:
     inputToken: Token
     types: List[str]
     path: List[Union[int, str]]

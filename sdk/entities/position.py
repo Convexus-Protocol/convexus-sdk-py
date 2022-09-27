@@ -1,4 +1,5 @@
-from typing import NamedTuple, cast
+from dataclasses import dataclass
+from typing import cast
 from icontoolkit.BigInt import BigInt
 
 from icontoolkit.constants import BigintIsh
@@ -15,13 +16,15 @@ from sdk.utils.sqrtPriceMath import SqrtPriceMath
 from sdk.utils.encodeSqrtRatioX96 import encodeSqrtRatioX96
 from sdk.utils.maxLiquidityForAmounts import maxLiquidityForAmounts
 
-class PositionConstructorArgs(NamedTuple):
+@dataclass
+class PositionConstructorArgs:
   pool: Pool
   tickLower: int
   tickUpper: int
   liquidity: BigintIsh
 
-class FromAmountsArgs(NamedTuple):
+@dataclass
+class FromAmountsArgs:
   pool: Pool
   tickLower: int
   tickUpper: int
@@ -29,20 +32,23 @@ class FromAmountsArgs(NamedTuple):
   amount1: BigintIsh
   useFullPrecision: bool
 
-class FromAmount0Args(NamedTuple):
+@dataclass
+class FromAmount0Args:
   pool: Pool
   tickLower: int
   tickUpper: int
   amount0: BigintIsh
   useFullPrecision: bool
 
-class FromAmount1Args(NamedTuple):
+@dataclass
+class FromAmount1Args:
   pool: Pool
   tickLower: int
   tickUpper: int
   amount1: BigintIsh
 
-class Amounts(NamedTuple):
+@dataclass
+class Amounts:
   amount0: int
   amount1: int
 
@@ -74,9 +80,9 @@ class Position:
     self.tickLower: int = tickLower
     self.tickUpper: int = tickUpper
     self.liquidity: int = liquidity
-    self._token0Amount: CurrencyAmount | None = None
-    self._token1Amount: CurrencyAmount | None = None
-    self._mintAmounts: Amounts | None = None
+    self.__token0Amount: CurrencyAmount | None = None
+    self.__token1Amount: CurrencyAmount | None = None
+    self.__mintAmounts: Amounts | None = None
 
   @property
   def token0PriceLower(self) -> Price:
@@ -97,9 +103,9 @@ class Position:
     """
     * Returns the amount of token0 that this position's liquidity could be burned for at the current pool price
     """
-    if self._token0Amount == None:
+    if self.__token0Amount == None:
       if (self.pool.tickCurrent < self.tickLower):
-        self._token0Amount = CurrencyAmount.fromRawAmount(
+        self.__token0Amount = CurrencyAmount.fromRawAmount(
           self.pool.token0,
           SqrtPriceMath.getAmount0Delta(
             TickMath.getSqrtRatioAtTick(self.tickLower),
@@ -109,7 +115,7 @@ class Position:
           )
         )
       elif (self.pool.tickCurrent < self.tickUpper):
-        self._token0Amount = CurrencyAmount.fromRawAmount(
+        self.__token0Amount = CurrencyAmount.fromRawAmount(
           self.pool.token0,
           SqrtPriceMath.getAmount0Delta(
             self.pool.sqrtRatioX96,
@@ -119,20 +125,20 @@ class Position:
           )
         )
       else:
-        self._token0Amount = CurrencyAmount.fromRawAmount(self.pool.token0, 0)
+        self.__token0Amount = CurrencyAmount.fromRawAmount(self.pool.token0, 0)
     
-    return cast(CurrencyAmount, self._token0Amount)
+    return cast(CurrencyAmount, self.__token0Amount)
 
   @property
   def amount1(self) -> CurrencyAmount:
     """
     * Returns the amount of token1 that this position's liquidity could be burned for at the current pool price
     """
-    if (self._token1Amount == None):
+    if (self.__token1Amount == None):
       if (self.pool.tickCurrent < self.tickLower):
-        self._token1Amount = CurrencyAmount.fromRawAmount(self.pool.token1, 0)
+        self.__token1Amount = CurrencyAmount.fromRawAmount(self.pool.token1, 0)
       elif (self.pool.tickCurrent < self.tickUpper):
-        self._token1Amount = CurrencyAmount.fromRawAmount(
+        self.__token1Amount = CurrencyAmount.fromRawAmount(
           self.pool.token1,
           SqrtPriceMath.getAmount1Delta(
             TickMath.getSqrtRatioAtTick(self.tickLower),
@@ -142,7 +148,7 @@ class Position:
           )
         )
       else:
-        self._token1Amount = CurrencyAmount.fromRawAmount(
+        self.__token1Amount = CurrencyAmount.fromRawAmount(
           self.pool.token1,
           SqrtPriceMath.getAmount1Delta(
             TickMath.getSqrtRatioAtTick(self.tickLower),
@@ -151,9 +157,10 @@ class Position:
             True
           )
         )
-    return cast(CurrencyAmount, self._token1Amount)
+    return cast(CurrencyAmount, self.__token1Amount)
 
-  class RatiosAfterSlippageResult(NamedTuple):
+  @dataclass
+  class RatiosAfterSlippageResult:
     """
     * Returns the lower and upper sqrt ratios if the price 'slips' up to slippage tolerance percentage
     * @param slippageTolerance The amount by which the price can 'slip' before the transaction will revert
@@ -309,7 +316,7 @@ class Position:
     * Returns the minimum amounts that must be sent in order to mint the amount of liquidity held by the position at
     * the current price for the pool
     """
-    if (self._mintAmounts == None):
+    if (self.__mintAmounts == None):
       if (self.pool.tickCurrent < self.tickLower):
         return Amounts(
           amount0=SqrtPriceMath.getAmount0Delta(
@@ -346,7 +353,7 @@ class Position:
           )
         )
 
-    return cast(Amounts, self._mintAmounts)
+    return cast(Amounts, self.__mintAmounts)
 
   @staticmethod
   def fromAmounts (

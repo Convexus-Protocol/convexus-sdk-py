@@ -17,5 +17,5 @@ class TestSqrt(unittest.TestCase):
       expect(sqrt(rootSquared)).toEqual(root)
 
   def test_correctForMaxUint256(self):
-    expect(sqrt(MaxUint256)).toEqual(int('340282366920938463463374607431768211456'))
+    expect(sqrt(MaxUint256)).toEqual(int('340282366920938463463374607431768211455'))
   

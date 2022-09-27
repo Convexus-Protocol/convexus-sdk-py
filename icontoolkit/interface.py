@@ -96,7 +96,7 @@ class Interface:
       "params": {
         "_to": self.contractAddress,
         "_value": toHex(amount),
-        "_data": "0x" + json.dumps(tokenFallbackPayload).encode().hex()
+        "_data": "0x" + json.dumps(tokenFallbackPayload, separators=(',', ':')).encode().hex()
       }
     }
 

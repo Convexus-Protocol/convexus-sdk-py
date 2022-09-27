@@ -1,6 +1,6 @@
 import math
 
-MAX_SAFE_INTEGER = 2**1024
+MAX_SAFE_INTEGER = (2^53) - 1
 
 def sqrt(value: int) -> int:
   """

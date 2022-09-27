@@ -15,6 +15,9 @@ class TickListDataProvider(TickDataProvider):
     TickList.validateList(ticksMapped, tickSpacing)
     self.ticks = ticksMapped
 
+  def __repr__(self) -> str:
+    return str(self.__dict__)
+
   def getTick(self, tick: int):
     return TickList.getTick(self.ticks, tick)
 

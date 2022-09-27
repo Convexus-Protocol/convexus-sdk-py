@@ -108,6 +108,9 @@ class Token(BaseCurrency, metaclass=ABCMeta):
     """
     self.address = validateAndParseAddress(address)
 
+  def __repr__(self) -> str:
+    return str(self.__dict__)
+
   def equals(self, other: 'Currency') -> bool:
     """
     * Returns true if the two tokens are equivalent, i.e. have the same address.

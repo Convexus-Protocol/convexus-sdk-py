@@ -51,5 +51,8 @@ class Price(Fraction):
     """
     return super().multiply(self.scalar)
 
+  def toSignificant(self, decimalPlaces: int = 4, rounding: Rounding = Rounding.ROUND_HALF_UP) -> str:
+    return self.toFixed(decimalPlaces, rounding)
+
   def toFixed(self, decimalPlaces: int = 4, rounding: Rounding = Rounding.ROUND_HALF_UP) -> str:
     return self.adjustedForDecimals.toFixed(decimalPlaces, rounding)

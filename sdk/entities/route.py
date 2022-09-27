@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List, NamedTuple, cast
 
 from sdk.entities.pool import Pool
@@ -25,7 +26,7 @@ class Route:
     self.tokenPath: List[Token]
     self.input: Currency
     self.output: Currency
-    self._midPrice: Price | None = None
+    self.__midPrice: Price | None = None
 
     assert len(pools) > 0, 'POOLS'
 
@@ -46,15 +47,19 @@ class Route:
     self.input = input
     self.output = output if output else tokenPath[len(tokenPath) - 1]
 
+  def __repr__(self) -> str:
+    return str(self.__dict__)
+
   """
    * Returns the mid price of the route
   """
   @property
   def midPrice(self) -> Price:
-    if (self._midPrice != None):
-      return cast(Price, self._midPrice)
-
-    class NextInputPrice(NamedTuple):
+    if (self.__midPrice != None):
+      return cast(Price, self.__midPrice)
+    
+    @dataclass
+    class NextInputPrice:
       nextInput: Token
       price: Price
 
@@ -62,10 +67,10 @@ class Route:
       lambda nip, pool:
         NextInputPrice (
           pool.token1,
-          price.multiply(pool.token0Price)
+          nip.price.multiply(pool.token0Price)
         ) if nip.nextInput.equals(pool.token0) else NextInputPrice (
           pool.token0,
-          price.multiply(pool.token1Price)
+          nip.price.multiply(pool.token1Price)
         ),
 
       self.pools[1:],
@@ -79,5 +84,5 @@ class Route:
       )
     ).price
 
-    self._midPrice = Price(self.input, self.output, price.denominator, price.numerator)
-    return self._midPrice
+    self.__midPrice = Price(self.input, self.output, price.denominator, price.numerator)
+    return self.__midPrice
