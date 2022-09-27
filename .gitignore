@@ -4,3 +4,4 @@ venv
 .mypy_cache
 .pytest_cache
 convexus.egg-info
+dist/
