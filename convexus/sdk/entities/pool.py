@@ -19,7 +19,7 @@ from convexus.sdk.utils.swapMath import SwapMath
 from convexus.sdk.utils.liquidityMath import LiquidityMath
 from convexus.sdk.entities.slot0 import Slot0
 from collections.abc import Sequence
-from convexus.sdk.artifacts.contracts.ConvexusPool import IConvexusPool
+from convexus.sdkcore.artifacts.contracts.IRC2 import IIRC2
 
 @dataclass
 class StepComputations:
@@ -92,25 +92,19 @@ class Pool:
     self.__token1Price: Price | None = None
 
   @staticmethod
-  async def fromContract (
-    address: str, 
-    iconService: IconService, 
-    debugService: IconService, 
-    networkId: int
-  ) -> 'Token':
-    contract = Contract(address, IConvexusPool, iconService, debugService, networkId)
-    token0_address, token1_address, slot0, fee, liquidity = await asyncio.gather(
+  async def fromContract (contract: Contract) -> 'Token':
+    addr0, addr1, _slot0, fee, liquidity = await asyncio.gather(
       contract.token0(), 
       contract.token1(), 
       contract.slot0(),
       contract.fee(),
       contract.liquidity()
     )
-    slot0 = Slot0.fromCall(slot0)
-    args = iconService, debugService, networkId
+    slot0 = Slot0.fromCall(_slot0)
+    args = IIRC2, contract.iconService, contract.debugService, contract.nid
     token0, token1 = await asyncio.gather(
-      Token.fromContract(token0_address, *args),
-      Token.fromContract(token1_address, *args)
+      Token.fromContract(Contract(addr0, *args)),
+      Token.fromContract(Contract(addr1, *args))
     )
 
     return Pool(token0, token1, fee, slot0.sqrtPriceX96, liquidity, slot0.tick)

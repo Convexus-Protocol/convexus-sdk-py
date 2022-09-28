@@ -1,10 +1,8 @@
 import asyncio
 from abc import ABCMeta, abstractmethod
 from typing import Union
-from iconsdk.icon_service import IconService
 from convexus.icontoolkit.validateAndParseAddress import validateAndParseAddress
 from convexus.icontoolkit.contract import Contract
-from convexus.sdkcore.artifacts.contracts.IRC2 import IIRC2
 
 class BaseCurrency(metaclass=ABCMeta):
   """
@@ -103,19 +101,13 @@ class Token(BaseCurrency, metaclass=ABCMeta):
     return True
 
   @staticmethod
-  async def fromContract (
-    address: str, 
-    iconService: IconService, 
-    debugService: IconService, 
-    networkId: int
-  ) -> 'Token':
-    contract = Contract(address, IIRC2, iconService, debugService, networkId)
+  async def fromContract (contract: Contract) -> 'Token':
     decimals, name, symbol = await asyncio.gather(
       contract.decimals(), 
       contract.name(), 
       contract.symbol()
     )
-    return Token(address, decimals, symbol, name)
+    return Token(contract.address, decimals, symbol, name)
 
   def __init__(self, address: str, decimals: int, symbol: str = None, name: str = None):
     super().__init__(decimals, symbol, name)
