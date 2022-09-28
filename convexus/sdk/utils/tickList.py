@@ -95,17 +95,17 @@ class TickList:
       minimum = (wordPos << 8) * tickSpacing
 
       if (TickList.isBelowSmallest(ticks, tick)):
-        return [minimum, False]
+        return (minimum, False)
 
       index = TickList.nextInitializedTick(ticks, tick, lte).index
       nextInitializedTick = max(minimum, index)
-      return [nextInitializedTick, nextInitializedTick == index]
+      return (nextInitializedTick, nextInitializedTick == index)
     else:
       wordPos = (compressed + 1) >> 8
       maximum = (((wordPos + 1) << 8) - 1) * tickSpacing
 
       if (TickList.isAtOrAboveLargest(ticks, tick)):
-        return [maximum, False]
+        return (maximum, False)
 
       index = TickList.nextInitializedTick(ticks, tick, lte).index
       nextInitializedTick = min(maximum, index)

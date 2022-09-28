@@ -84,26 +84,26 @@ class TestTickList(unittest.TestCase):
       self.assertEqual(TickList.nextInitializedTick(self.ticks, TickMath.MAX_TICK - 3, False), self.highTick)
 
   def test_nextInitializedTickWithinOneWord_WordsAround0LteTrue(self):
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -257, True, 1), [-512, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -256, True, 1), [-256, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -1, True, 1), [-256, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 0, True, 1), [0, True])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 1, True, 1), [0, True])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 255, True, 1), [0, True])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 256, True, 1), [256, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 257, True, 1), [256, False])
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -257, True, 1), (-512, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -256, True, 1), (-256, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -1, True, 1), (-256, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 0, True, 1), (0, True))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 1, True, 1), (0, True))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 255, True, 1), (0, True))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 256, True, 1), (256, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 257, True, 1), (256, False))
 
   def test_nextInitializedTickWithinOneWord_WordsAround0LteFalse(self):
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -258, False, 1), [-257, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -257, False, 1), [-1, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -256, False, 1), [-1, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -2, False, 1), [-1, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -1, False, 1), [0, True])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 0, False, 1), [255, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 1, False, 1), [255, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 254, False, 1), [255, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 255, False, 1), [511, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 256, False, 1), [511, False])
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -258, False, 1), (-257, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -257, False, 1), (-1, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -256, False, 1), (-1, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -2, False, 1), (-1, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, -1, False, 1), (0, True))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 0, False, 1), (255, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 1, False, 1), (255, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 254, False, 1), (255, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 255, False, 1), (511, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(self.ticks, 256, False, 1), (511, False))
       
   def test_nextInitializedTickWithinOneWord_PerformsCorrectlyWithTickSpacing1(self):
     ticks = [
@@ -119,8 +119,8 @@ class TestTickList(unittest.TestCase):
       ))
     ]
 
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(ticks, 0, False, 1), [255, False])
-    self.assertEqual(TickList.nextInitializedTickWithinOneWord(ticks, 0, False, 2), [510, False])
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(ticks, 0, False, 1), (255, False))
+    self.assertEqual(TickList.nextInitializedTickWithinOneWord(ticks, 0, False, 2), (510, False))
 
 if __name__ == '__main__':
     unittest.main()
