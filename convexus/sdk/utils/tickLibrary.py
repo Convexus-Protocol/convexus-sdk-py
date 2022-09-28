@@ -1,10 +1,7 @@
 from abc import ABCMeta
 from dataclasses import dataclass
 
-@dataclass
-class FeeGrowthOutside:
-  feeGrowthOutside0X128: int
-  feeGrowthOutside1X128: int
+from convexus.sdk.entities.tick import FeeGrowthOutside
 
 Q256 = 2**256
 
