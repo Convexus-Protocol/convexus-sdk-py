@@ -1,3 +1,5 @@
+from abc import ABCMeta
+
 from convexus.sdkcore.constants import MaxUint256
 from convexus.sdk.utils.fullMath import FullMath
 from convexus.sdk.internalConstants import Q96
@@ -12,7 +14,6 @@ def addIn256(x: int, y: int) -> int:
   sum = x + y
   return sum & MaxUint256
 
-from abc import ABCMeta
 
 class SqrtPriceMath(metaclass=ABCMeta):
 

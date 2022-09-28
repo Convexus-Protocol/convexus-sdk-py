@@ -1,6 +1,3 @@
-# import { Token } from '@convexus/sdk-core'
-# import { FeeAmount } from '../constants'
-
 from abc import ABCMeta, abstractmethod
 from convexus.sdkcore.entities.currency import Token
 from convexus.sdk.constants import FeeAmount

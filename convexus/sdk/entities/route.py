@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, NamedTuple, cast
+from typing import List, cast
 
 from convexus.sdk.entities.pool import Pool
 from convexus.sdkcore.entities.currency import Currency, Token

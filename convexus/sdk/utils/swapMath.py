@@ -1,6 +1,6 @@
 from abc import ABCMeta
 from dataclasses import dataclass
-from typing import List, NamedTuple, Tuple
+from typing import Tuple
 
 from convexus.sdk.constants import FeeAmount
 from convexus.sdk.utils.sqrtPriceMath import SqrtPriceMath
@@ -84,4 +84,4 @@ class SwapMath(metaclass=ABCMeta):
     else:
       returnValues.feeAmount = FullMath.mulDivRoundingUp(returnValues.amountIn, feePips, (MAX_FEE - feePips))
     
-    return [returnValues.sqrtRatioNextX96, returnValues.amountIn, returnValues.amountOut, returnValues.feeAmount]
+    return (returnValues.sqrtRatioNextX96, returnValues.amountIn, returnValues.amountOut, returnValues.feeAmount)

@@ -20,7 +20,7 @@ from convexus.sdkcore.constants import TradeType
 from convexus.sdkcore.entities.icx import Icx
 from convexus.sdkcore.entities.fractions.percent import Percent
 
-from convexus.sdk.artifacts.contracts.SwapRouter.SwapRouter import ISwapRouter
+from convexus.sdk.artifacts.contracts.SwapRouter import ISwapRouter
 from convexus.sdk.entities.trade import Trade
 from convexus.sdk.utils.encodeRouteToPath import encodeRouteToPath
 

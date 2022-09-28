@@ -14,7 +14,7 @@ from convexus.sdkcore.entities.fractions.currencyAmount import CurrencyAmount
 from convexus.sdkcore.entities.currency import NativeCurrency, Token
 
 from convexus.sdk.entities.position import Position, PositionConstructorArgs
-from convexus.sdk.artifacts.contracts.NonfungiblePositionManager.NonfungiblePositionManager import INonfungiblePositionManager
+from convexus.sdk.artifacts.contracts.NonfungiblePositionManager import INonfungiblePositionManager
 
 MaxUint128 = toHex((2**128) - 1)
 

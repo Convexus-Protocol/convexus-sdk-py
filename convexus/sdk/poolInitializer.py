@@ -3,7 +3,7 @@ from convexus.icontoolkit.calldata import toHex
 from convexus.icontoolkit.interface import Interface, CallData
 from convexus.sdk.entities.pool import Pool
 
-from convexus.sdk.artifacts.contracts.PoolInitializer.PoolInitializer import IPoolInitializer
+from convexus.sdk.artifacts.contracts.PoolInitializer import IPoolInitializer
 
 class PoolInitializer:
   INTERFACE: Interface = Interface(IPoolInitializer, "PoolInitializer")

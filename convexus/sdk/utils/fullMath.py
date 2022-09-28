@@ -1,6 +1,7 @@
 from abc import ABCMeta
 
 class FullMath(metaclass=ABCMeta):
+
   @staticmethod
   def mulDivRoundingUp(a: int, b: int, denominator: int) -> int:
     product = a * b

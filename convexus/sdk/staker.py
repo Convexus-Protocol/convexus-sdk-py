@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 import json
 from abc import ABCMeta
-from functools import reduce
-from typing import List, NamedTuple, Tuple, Union, cast
-from convexus.icontoolkit.BigInt import BigInt
+from typing import List, Tuple
 from convexus.icontoolkit.calldata import toHex
 
 from convexus.icontoolkit.constants import BigintIsh
@@ -14,7 +12,7 @@ from convexus.sdkcore.entities.currency import Token
 from convexus.sdk.entities.factoryProvider import PoolFactoryProvider
 from convexus.sdk.entities.pool import Pool
 
-from convexus.sdk.artifacts.contracts.ConvexusStaker.ConvexusStaker import IConvexusStaker
+from convexus.sdk.artifacts.contracts.ConvexusStaker import IConvexusStaker
 
 from collections.abc import Sequence
 
@@ -250,10 +248,10 @@ class Staker(metaclass=ABCMeta):
     """
     pool = incentiveKey.pool
     refundee = validateAndParseAddress(incentiveKey.refundee)
-    return [
+    return (
       incentiveKey.rewardToken.address,
       Pool.getAddress(poolFactoryProvider, pool.token0, pool.token1, pool.fee),
       toHex(incentiveKey.startTime),
       toHex(incentiveKey.endTime),
       refundee
-    ]
+    )

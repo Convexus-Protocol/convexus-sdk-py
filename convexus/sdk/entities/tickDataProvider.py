@@ -1,10 +1,11 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
 class TickDataProvider(metaclass=ABCMeta):
   """
   * Provides information about ticks
   """
 
+  @abstractmethod
   def getTick(self, tick: int):
     """
     * Return information corresponding to a specific tick
@@ -12,6 +13,7 @@ class TickDataProvider(metaclass=ABCMeta):
     """
     pass
 
+  @abstractmethod
   def nextInitializedTickWithinOneWord(self, tick: int, lte: bool, tickSpacing: int):
     """
     * Return the next tick that is initialized within a single word

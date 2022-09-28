@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from functools import reduce
-from typing import List, NamedTuple, Union
+from typing import List, Union
 
 from convexus.icontoolkit.pack import pack
 
-from convexus.sdkcore.entities.currency import Currency, Token
+from convexus.sdkcore.entities.currency import Token
 
 from convexus.sdk.entities.pool import Pool
 from convexus.sdk.entities.route import Route

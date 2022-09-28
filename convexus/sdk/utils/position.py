@@ -4,6 +4,7 @@ from convexus.sdk.utils.tickLibrary import subIn256
 Q128 = 2**128
 
 class PositionLibrary(metaclass=ABCMeta):
+  
   @staticmethod
   def getTokensOwed (
     feeGrowthInside0LastX128: int,

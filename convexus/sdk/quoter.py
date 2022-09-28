@@ -1,6 +1,6 @@
 from abc import ABCMeta
 from dataclasses import dataclass
-from typing import List, NamedTuple
+from typing import List
 from convexus.icontoolkit.calldata import toHex
 
 from convexus.icontoolkit.constants import BigintIsh
@@ -10,7 +10,7 @@ from convexus.sdkcore.entities.fractions.currencyAmount import CurrencyAmount
 from convexus.sdkcore.constants import TradeType
 
 from convexus.sdk.entities.route import Route
-from convexus.sdk.artifacts.contracts.Quoter.Quoter import IQuoter
+from convexus.sdk.artifacts.contracts.Quoter import IQuoter
 from convexus.sdk.utils.encodeRouteToPath import encodeRouteToPath
 
 @dataclass
