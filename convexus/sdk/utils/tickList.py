@@ -1,5 +1,5 @@
 from math import floor
-from typing import List
+from typing import List, Tuple
 from convexus.sdk.entities.tick import Tick
 from functools import reduce
 
@@ -87,7 +87,7 @@ class TickList:
     tick: int,
     lte: bool,
     tickSpacing: int
-  ):
+  ) -> Tuple[int, bool]:
     compressed = floor(tick / tickSpacing) # matches rounding in the code
 
     if (lte):
@@ -109,4 +109,4 @@ class TickList:
 
       index = TickList.nextInitializedTick(ticks, tick, lte).index
       nextInitializedTick = min(maximum, index)
-      return [nextInitializedTick, nextInitializedTick == index]
+      return (nextInitializedTick, nextInitializedTick == index)

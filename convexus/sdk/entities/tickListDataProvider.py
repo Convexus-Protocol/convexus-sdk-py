@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from convexus.icontoolkit.constants import BigintIsh
 from convexus.sdk.utils.tickList import TickList
 from convexus.sdk.entities.tick import Tick, TickConstructorArgs
@@ -18,8 +18,8 @@ class TickListDataProvider(TickDataProvider):
   def __repr__(self) -> str:
     return str(self.__dict__)
 
-  def getTick(self, tick: int):
+  def getTick(self, tick: int) -> Tick:
     return TickList.getTick(self.ticks, tick)
 
-  def nextInitializedTickWithinOneWord(self, tick: int, lte: bool, tickSpacing: int):
+  def nextInitializedTickWithinOneWord(self, tick: int, lte: bool, tickSpacing: int) -> Tuple[int, bool]:
     return TickList.nextInitializedTickWithinOneWord(self.ticks, tick, lte, tickSpacing)
