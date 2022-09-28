@@ -4,6 +4,7 @@ from convexus.sdkcore.entities.currency import Currency
 from convexus.sdkcore.entities.fractions.fraction import Fraction
 from convexus.sdkcore.entities.fractions.currencyAmount import CurrencyAmount
 from convexus.sdk.internalConstants import Q192
+from convexus.sdk.utils.tickMath import TickMath
 
 class Price(Fraction):
   def __init__(self, baseCurrency: Currency, quoteCurrency: Currency, denominator: BigintIsh, numerator: BigintIsh):
@@ -20,7 +21,12 @@ class Price(Fraction):
     return Price(baseCurrency, quoteCurrency, Q192, sqrtPrice**2)
 
   @classmethod
-  def fromAmounts(cls, baseAmount: CurrencyAmount, quoteAmount: CurrencyAmount):
+  def fromTick(cls, baseCurrency: Currency, quoteCurrency: Currency, tick: int) -> 'Price':
+    sqrtPrice = TickMath.getSqrtRatioAtTick(tick)
+    return cls.fromSqrtPrice(baseCurrency, quoteCurrency, sqrtPrice)
+
+  @classmethod
+  def fromAmounts(cls, baseAmount: CurrencyAmount, quoteAmount: CurrencyAmount) -> 'Price':
     result = quoteAmount.divide(baseAmount)
     return cls(baseAmount.currency, quoteAmount.currency, result.denominator, result.numerator)
 
