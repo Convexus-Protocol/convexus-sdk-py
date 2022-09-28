@@ -33,11 +33,11 @@ class Tick:
     self.secondsPerLiquidityOutsideX128 = BigInt(args.secondsPerLiquidityOutsideX128) if args.secondsPerLiquidityOutsideX128 else None
     self.tickCumulativeOutside = BigInt(args.tickCumulativeOutside) if args.tickCumulativeOutside else None
     self.initialized = args.initialized
-  
+
   @staticmethod
-  def fromCall (data: Dict[str, str]) -> 'Tick':
+  def fromCall (index: int, data: Dict[str, str]) -> 'Tick':
     return Tick (TickConstructorArgs(
-      data['index'],
+      index,
       data['liquidityGross'],
       data['liquidityNet'],
       FeeGrowthOutside (
