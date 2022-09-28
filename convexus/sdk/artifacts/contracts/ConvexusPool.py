@@ -445,7 +445,7 @@ IConvexusPool = [
     },
     {
         "inputs": [],
-        "name": "payIcx",
+        "name": "depositIcx",
         "outputs": [],
         "payable": "0x1",
         "type": "function"
@@ -660,6 +660,33 @@ IConvexusPool = [
         "outputs": [
             {
                 "type": "dict"
+            }
+        ],
+        "readonly": "0x1",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "ticksKeysSize",
+        "outputs": [
+            {
+                "type": "int"
+            }
+        ],
+        "readonly": "0x1",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "index",
+                "type": "int"
+            }
+        ],
+        "name": "ticksKeys",
+        "outputs": [
+            {
+                "type": "int"
             }
         ],
         "readonly": "0x1",
