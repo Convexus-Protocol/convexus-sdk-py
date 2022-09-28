@@ -9,6 +9,9 @@ class FeeGrowthOutside:
     self.feeGrowthOutside0X128 = BigInt(feeGrowthOutside0X128)
     self.feeGrowthOutside1X128 = BigInt(feeGrowthOutside1X128)
 
+  def __repr__(self) -> str:
+    return str(self.__dict__)
+
 @dataclass
 class TickConstructorArgs:
   index: int # type: ignore[assignment]
