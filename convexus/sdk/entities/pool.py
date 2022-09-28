@@ -91,7 +91,7 @@ class Pool:
     self.__token1Price: Price | None = None
 
   @staticmethod
-  async def fromContract (contract: Contract) -> 'Token':
+  async def fromContract (contract: Contract) -> 'Pool':
     addr0, addr1, _slot0, fee, liquidity = await asyncio.gather(
       contract.token0(), 
       contract.token1(), 
@@ -194,7 +194,7 @@ class Pool:
     outputToken = self.token1 if zeroForOne else self.token0
     return (
       CurrencyAmount.fromRawAmount(outputToken, outputAmount * -1),
-      Pool(self.token0, self.token1, self.fee, sqrtRatioX96, liquidity, tickCurrent, self.tickDataProvider)
+      Pool(self.token0, self.token1, self.fee, sqrtRatioX96, liquidity, tickCurrent, self.tickDataProvider, self.poolFactoryProvider)
     )
 
   def getInputAmount (
@@ -227,7 +227,7 @@ class Pool:
 
     return (
       CurrencyAmount.fromRawAmount(inputToken, inputAmount),
-      Pool(self.token0, self.token1, self.fee, sqrtRatioX96, liquidity, tickCurrent, self.tickDataProvider)
+      Pool(self.token0, self.token1, self.fee, sqrtRatioX96, liquidity, tickCurrent, self.tickDataProvider, self.poolFactoryProvider)
     )
 
   def swap (
