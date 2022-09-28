@@ -1,47 +1,52 @@
 from dataclasses import dataclass
 from typing import Dict
+from convexus.icontoolkit.BigInt import BigInt
+from convexus.icontoolkit.constants import BigintIsh
 from convexus.sdk.utils.tickMath import TickMath
 
-@dataclass
 class FeeGrowthOutside:
-  feeGrowthOutside0X128: int
-  feeGrowthOutside1X128: int
+  def __init__(self, feeGrowthOutside0X128: BigintIsh, feeGrowthOutside1X128: BigintIsh) -> None:
+    self.feeGrowthOutside0X128 = BigInt(feeGrowthOutside0X128)
+    self.feeGrowthOutside1X128 = BigInt(feeGrowthOutside1X128)
 
 @dataclass
 class TickConstructorArgs:
   index: int # type: ignore[assignment]
-  liquidityGross: int
-  liquidityNet: int
+  liquidityGross: BigintIsh
+  liquidityNet: BigintIsh
   feeGrowthOutside: FeeGrowthOutside | None = None
-  secondsOutside: int | None = None
-  secondsPerLiquidityOutsideX128: int | None = None
-  tickCumulativeOutside: int | None = None
+  secondsOutside: BigintIsh | None = None
+  secondsPerLiquidityOutsideX128: BigintIsh | None = None
+  tickCumulativeOutside: BigintIsh | None = None
   initialized: bool | None = None
 
 class Tick:
   def __init__(self, args: TickConstructorArgs) -> None:
     index = args.index
     assert index >= TickMath.MIN_TICK and index <= TickMath.MAX_TICK, 'TICK'
-    
+
     self.index = index
-    self.liquidityGross = args.liquidityGross
-    self.liquidityNet = args.liquidityNet
+    self.liquidityGross = BigInt(args.liquidityGross)
+    self.liquidityNet = BigInt(args.liquidityNet)
     self.feeGrowthOutside = args.feeGrowthOutside
-    self.secondsOutside = args.secondsOutside
-    self.secondsPerLiquidityOutsideX128 = args.secondsPerLiquidityOutsideX128
-    self.tickCumulativeOutside = args.tickCumulativeOutside
+    self.secondsOutside = BigInt(args.secondsOutside) if args.secondsOutside else None
+    self.secondsPerLiquidityOutsideX128 = BigInt(args.secondsPerLiquidityOutsideX128) if args.secondsPerLiquidityOutsideX128 else None
+    self.tickCumulativeOutside = BigInt(args.tickCumulativeOutside) if args.tickCumulativeOutside else None
     self.initialized = args.initialized
   
   @staticmethod
   def fromCall (data: Dict[str, str]) -> 'Tick':
     return Tick (TickConstructorArgs(
-      int(data['index'], 0),
-      int(data['liquidityGross'], 0),
-      int(data['liquidityNet'], 0),
-      int(data['feeGrowthOutside'], 0),
-      int(data['secondsOutside'], 0),
-      int(data['secondsPerLiquidityOutsideX128'], 0),
-      int(data['tickCumulativeOutside'], 0),
+      data['index'],
+      data['liquidityGross'],
+      data['liquidityNet'],
+      FeeGrowthOutside (
+        data['feeGrowthOutside0X128'],
+        data['feeGrowthOutside1X128']
+      ),
+      data['secondsOutside'],
+      data['secondsPerLiquidityOutsideX128'],
+      data['tickCumulativeOutside'],
       bool(int(data['initialized'], 0)),
     ))
 
