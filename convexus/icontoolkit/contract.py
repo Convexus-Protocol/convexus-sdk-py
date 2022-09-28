@@ -1,4 +1,4 @@
-from typing import List
+from typing import Callable, List
 import time
 from functools import partial
 
@@ -17,11 +17,14 @@ class Contract(object):
   def defineReadOnly(self, name, value):
     self.__dict__[name] = value
 
-  def buildCallArray(self, method: str, *args):
-    data = self.interface.encodeFunctionData(method, args)
-    return self.buildCall(method, data)
-
   @make_async
+  def buildCallArray(self, method: str, output_transform: Callable, *args):
+    data = self.interface.encodeFunctionData(method, args)
+    result = self.buildCall(method, data)
+    if output_transform:
+      result = output_transform(result)
+    return result
+
   def buildCall (self, method: str, data: dict):
     txObj = CallBuilder()\
       .to(self.address)\
@@ -31,12 +34,17 @@ class Contract(object):
 
     return self.iconService.call(txObj)
 
-  def buildSendArray (self, method: str, wallet: KeyWallet, *args):
+  @make_async
+  def buildSendArray (self, method: str, output_transform: Callable, wallet: KeyWallet, *args):
     if args:
-      return self.buildSendArrayPayable(method, 0, wallet, args)
+      result = self.buildSendArrayPayable(method, 0, wallet, args)
     else:
-      return self.buildSendArrayPayable(method, 0, wallet)
+      result = self.buildSendArrayPayable(method, 0, wallet)
+    
+    if output_transform:
+      result = output_transform(result)
 
+    return result
 
   def buildSendArrayPayable (self, method: str, icxAmount: int, wallet: KeyWallet, *args):
     data = self.interface.encodeFunctionDataPayable(icxAmount, method, *args)
@@ -46,7 +54,6 @@ class Contract(object):
     icxValue = calldata["value"] if 'value' in calldata else 0
     return self.buildSendPayable(calldata['to'], calldata['method'], icxValue, wallet, calldata['params'], waitForResult)
 
-  @make_async
   def buildSendPayable (self, to: str, method: str, icxAmount: int, wallet: KeyWallet, params, waitForResult: bool):
     txObjBuilder = CallTransactionBuilder()\
       .method(method)\
@@ -99,10 +106,19 @@ class Contract(object):
     for obj in self.interface.abi:
       if obj['type'] == "function":
           name = obj['name']
+          output_transform = None
+          if 'outputs' in obj and len(obj['outputs']):
+            output_type = obj['outputs'][0]['type']
+            if output_type == "int":
+              output_transform = lambda x: int(x, 0)
+            if output_type == "bytes":
+              output_transform = lambda x: bytes.fromhex(x.replace("0x", ""))
+
           # readonly methods
           if 'readonly' in obj and int(obj['readonly'], 16) == 1:
-            buildCallArray = partial(self.buildCallArray, name)
+            buildCallArray = partial(self.buildCallArray, name, output_transform)
             self.defineReadOnly(name, buildCallArray)
+          # write methods
           else:
-            buildSendArray = partial(self.buildSendArray, name)
+            buildSendArray = partial(self.buildSendArray, name, output_transform)
             self.defineReadOnly(name, buildSendArray)
