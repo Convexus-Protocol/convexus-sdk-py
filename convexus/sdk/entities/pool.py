@@ -1,5 +1,4 @@
 import asyncio
-from iconsdk.icon_service import IconService
 from dataclasses import dataclass
 from typing import List, Tuple, cast
 from convexus.icontoolkit.contract import Contract
@@ -18,8 +17,8 @@ from convexus.sdk.internalConstants import Q192
 from convexus.sdk.utils.swapMath import SwapMath
 from convexus.sdk.utils.liquidityMath import LiquidityMath
 from convexus.sdk.entities.slot0 import Slot0
+from convexus.sdk.artifacts.contracts.IRC2 import IIRC2
 from collections.abc import Sequence
-from convexus.sdkcore.artifacts.contracts.IRC2 import IIRC2
 
 @dataclass
 class StepComputations:
