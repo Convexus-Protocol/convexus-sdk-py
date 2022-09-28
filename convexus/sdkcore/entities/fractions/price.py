@@ -3,6 +3,7 @@ from convexus.sdkcore.constants import Rounding
 from convexus.sdkcore.entities.currency import Currency
 from convexus.sdkcore.entities.fractions.fraction import Fraction
 from convexus.sdkcore.entities.fractions.currencyAmount import CurrencyAmount
+from convexus.sdk.internalConstants import Q192
 
 class Price(Fraction):
   def __init__(self, baseCurrency: Currency, quoteCurrency: Currency, denominator: BigintIsh, numerator: BigintIsh):
@@ -13,6 +14,10 @@ class Price(Fraction):
     self.quoteCurrency = quoteCurrency
     # used to adjust the raw fraction w/r/t the decimals of the {base,quote}Token
     self.scalar = Fraction(10 ** baseCurrency.decimals, 10 ** quoteCurrency.decimals)
+
+  @classmethod
+  def fromSqrtPrice(cls, baseCurrency: Currency, quoteCurrency: Currency, sqrtPrice: BigintIsh) -> 'Price':
+    return Price(baseCurrency, quoteCurrency, Q192, sqrtPrice**2)
 
   @classmethod
   def fromAmounts(cls, baseAmount: CurrencyAmount, quoteAmount: CurrencyAmount):
