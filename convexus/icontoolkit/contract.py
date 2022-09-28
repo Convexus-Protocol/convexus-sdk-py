@@ -1,14 +1,16 @@
 from typing import List
-from iconsdk.icon_service import IconService
+import time
 from functools import partial
+
+from iconsdk.icon_service import IconService
 from iconsdk.wallet.wallet import KeyWallet
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.builder.call_builder import CallBuilder
-import time
-from convexus.icontoolkit.calldata import toHex
 
+from convexus.icontoolkit.calldata import toHex
 from convexus.icontoolkit.interface import Interface
+from convexus.icontoolkit.asynchronous import make_async
 
 class Contract(object):
   
@@ -19,6 +21,7 @@ class Contract(object):
     data = self.interface.encodeFunctionData(method, args)
     return self.buildCall(method, data)
 
+  @make_async
   def buildCall (self, method: str, data: dict):
     txObj = CallBuilder()\
       .to(self.address)\
@@ -43,6 +46,7 @@ class Contract(object):
     icxValue = calldata["value"] if 'value' in calldata else 0
     return self.buildSendPayable(calldata['to'], calldata['method'], icxValue, wallet, calldata['params'], waitForResult)
 
+  @make_async
   def buildSendPayable (self, to: str, method: str, icxAmount: int, wallet: KeyWallet, params, waitForResult: bool):
     txObjBuilder = CallTransactionBuilder()\
       .method(method)\
