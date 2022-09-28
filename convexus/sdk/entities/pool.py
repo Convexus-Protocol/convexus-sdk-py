@@ -1,5 +1,8 @@
+import asyncio
+from iconsdk.icon_service import IconService
 from dataclasses import dataclass
 from typing import List, Tuple, cast
+from convexus.icontoolkit.contract import Contract
 from convexus.icontoolkit.BigInt import BigInt
 from convexus.icontoolkit.constants import BigintIsh
 from convexus.sdkcore.entities.fractions.price import Price
@@ -14,7 +17,9 @@ from convexus.sdk.utils.tickMath import TickMath
 from convexus.sdk.internalConstants import Q192
 from convexus.sdk.utils.swapMath import SwapMath
 from convexus.sdk.utils.liquidityMath import LiquidityMath
+from convexus.sdk.entities.slot0 import Slot0
 from collections.abc import Sequence
+from convexus.sdk.artifacts.contracts.ConvexusPool import IConvexusPool
 
 @dataclass
 class StepComputations:
@@ -85,6 +90,30 @@ class Pool:
     self.poolFactoryProvider = poolFactoryProvider
     self.__token0Price: Price | None = None
     self.__token1Price: Price | None = None
+
+  @staticmethod
+  async def fromContract (
+    address: str, 
+    iconService: IconService, 
+    debugService: IconService, 
+    networkId: int
+  ) -> 'Token':
+    contract = Contract(address, IConvexusPool, iconService, debugService, networkId)
+    token0_address, token1_address, slot0, fee, liquidity = await asyncio.gather(
+      contract.token0(), 
+      contract.token1(), 
+      contract.slot0(),
+      contract.fee(),
+      contract.liquidity()
+    )
+    slot0 = Slot0.fromCall(slot0)
+    args = iconService, debugService, networkId
+    token0, token1 = await asyncio.gather(
+      Token.fromContract(token0_address, *args),
+      Token.fromContract(token1_address, *args)
+    )
+
+    return Pool(token0, token1, fee, slot0.sqrtPriceX96, liquidity, slot0.tick)
 
   def __repr__(self) -> str:
     return str(self.__dict__)
