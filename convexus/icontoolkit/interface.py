@@ -44,6 +44,9 @@ class Interface:
     elif inputType == "bytes":
       result[input['name']] = value
     
+    elif inputType == "bool":
+      result[input['name']] = toHex(value)
+    
     else:
       raise Exception(f"INVALID_PARAM_TYPE: {inputType}")
 
