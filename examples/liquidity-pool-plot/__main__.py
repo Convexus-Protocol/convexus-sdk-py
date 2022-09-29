@@ -1,5 +1,3 @@
-# pip install matplotlib seaborn
-
 from typing import List
 from convexus.icontoolkit import Contract
 from convexus.sdk import Pool, Tick, Price

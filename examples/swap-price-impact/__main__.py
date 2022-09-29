@@ -29,7 +29,7 @@ async def getSortedInitializedTicks(contract) -> List[Tick]:
   ticks = sorted(unsortedTicks, key=lambda x: x.index)
   return ticks
 
-async def main(poolAddress: str):
+async def main(poolAddress: str, symbol: str, amount: int):
   # Get Pool instance
   iconService = IconService(HTTPProvider("https://berlin.net.solidwallet.io", 3))
   contract = Contract(poolAddress, Contract.getAbi(iconService, poolAddress), iconService, iconService, 7)
@@ -37,12 +37,16 @@ async def main(poolAddress: str):
   pool = await Pool.fromContract(contract)
   pool.tickDataProvider = TicksDB(ticks)
 
-  print(f"Price before = {pool.token0Price.toFixed(2)}")
-  result = pool.swap(True, 10**18 * 20)
-  print(f"Price after = {Price.fromSqrtPrice(pool.token0, pool.token1, result.sqrtRatioX96).toFixed(2)}")
+  # Determiner zeroForOne from symbol name
+  zeroForOne = True if pool.token0.symbol == symbol else False
 
-if len(sys.argv) != 2:
-  print(f"Usage: {sys.argv[0]} <pool address>")
+  # Display price impact
+  print(f"Price before = {pool.token0Price.toFixed()} {pool.token0.symbol}/{pool.token1.symbol}")
+  result = pool.swap(zeroForOne, amount)
+  print(f"Price after  = {Price.fromSqrtPrice(pool.token0, pool.token1, result.sqrtRatioX96).toFixed()} {pool.token0.symbol}/{pool.token1.symbol}")
+
+if len(sys.argv) != 4:
+  print(f"Usage: {sys.argv[0]} <pool address> <token symbol to swap> <amount to swap>")
   sys.exit(1)
 
-asyncio.run(main(sys.argv[1]))
+asyncio.run(main(sys.argv[1], sys.argv[2], int(sys.argv[3], 0)))
