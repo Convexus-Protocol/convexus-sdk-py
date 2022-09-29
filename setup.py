@@ -23,7 +23,7 @@ setup(
     author='Convexus',
     author_email='convexus.protocol@gmail.com',
     url='https://github.com/Convexus-Protocol/convexus-sdk-py',
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=['tests*', 'examples*']),
     install_requires=requires,
     extras_require=extras_requires,
     python_requires='~=3.10',
