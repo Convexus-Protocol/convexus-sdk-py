@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict
-from icontoolkit.BigInt import BigInt
+from convexus.icontoolkit.BigInt import BigInt
 
 @dataclass
 class Slot0:
