@@ -12,13 +12,22 @@ from convexus.icontoolkit.calldata import toHex
 from convexus.icontoolkit.interface import Interface
 from convexus.icontoolkit.asynchronous import make_async
 
+class Sync(object):
+  pass
+
 class Contract(object):
   
-  def defineReadOnly(self, name, value):
+  def defineAsync(self, name, value):
     self.__dict__[name] = value
+
+  def defineSync(self, name, value):
+    self.sync.__dict__[name] = value
 
   @make_async
   def buildCallArray(self, method: str, output_transform: Callable, *args):
+    return self.buildCallArraySync(method, output_transform, *args)
+
+  def buildCallArraySync(self, method: str, output_transform: Callable, *args):
     data = self.interface.encodeFunctionData(method, args)
     result = self.buildCall(method, data)
     if output_transform:
@@ -36,6 +45,9 @@ class Contract(object):
 
   @make_async
   def buildSendArray (self, method: str, output_transform: Callable, wallet: KeyWallet, *args):
+    return self.buildSendArraySync(method, output_transform, wallet, *args)
+
+  def buildSendArraySync (self, method: str, output_transform: Callable, wallet: KeyWallet, *args):
     if args:
       result = self.buildSendArrayPayable(method, 0, wallet, args)
     else:
@@ -89,10 +101,14 @@ class Contract(object):
 
     return txhash
 
+  @staticmethod
+  def getAbi(iconService: IconService, address: str) -> List:
+    return iconService.get_score_api(address)
+
   def __init__ (
     self,
     address: str, 
-    abi: List, 
+    abi: List | None, 
     iconService: IconService,
     debugService: IconService,
     nid: int
@@ -102,6 +118,7 @@ class Contract(object):
     self.nid = nid
     self.address = address
     self.interface = Interface(abi, address)
+    self.sync = Sync()
 
     for obj in self.interface.abi:
       if obj['type'] == "function":
@@ -116,9 +133,9 @@ class Contract(object):
 
           # readonly methods
           if 'readonly' in obj and int(obj['readonly'], 16) == 1:
-            buildCallArray = partial(self.buildCallArray, name, output_transform)
-            self.defineReadOnly(name, buildCallArray)
+            self.defineAsync(name, partial(self.buildCallArray, name, output_transform))
+            self.defineSync(name, partial(self.buildCallArraySync, name, output_transform))
           # write methods
           else:
-            buildSendArray = partial(self.buildSendArray, name, output_transform)
-            self.defineReadOnly(name, buildSendArray)
+            self.defineAsync(name, partial(self.buildSendArray, name, output_transform))
+            self.defineSync(name, partial(self.buildSendArraySync, name, output_transform))
