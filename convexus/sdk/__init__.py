@@ -14,6 +14,7 @@ from .entities.tick import *
 from .entities.tickDataProvider import *
 from .entities.tickListDataProvider import *
 from .entities.trade import *
+from .entities.results import *
 
 from .utils.decodeSqrtRatioX96 import *
 from .utils.encodeRouteToPath import *
