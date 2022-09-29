@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Tuple
 
 class TickDataProvider(metaclass=ABCMeta):
   """
@@ -10,11 +11,12 @@ class TickDataProvider(metaclass=ABCMeta):
     """
     * Return information corresponding to a specific tick
     * @param tick the tick to load
+    * @returns Must return an object with a `liquidityNet` field
     """
     pass
 
   @abstractmethod
-  def nextInitializedTickWithinOneWord(self, tick: int, lte: bool, tickSpacing: int):
+  def nextInitializedTickWithinOneWord(self, tick: int, lte: bool, tickSpacing: int) -> Tuple[int, bool]:
     """
     * Return the next tick that is initialized within a single word
     * @param tick The current tick
