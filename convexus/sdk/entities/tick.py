@@ -14,7 +14,7 @@ class FeeGrowthOutside:
 
 @dataclass
 class TickConstructorArgs:
-  index: int # type: ignore[assignment]
+  index: int
   liquidityGross: BigintIsh
   liquidityNet: BigintIsh
   feeGrowthOutside: FeeGrowthOutside | None = None
@@ -38,9 +38,9 @@ class Tick:
     self.initialized = args.initialized
 
   @staticmethod
-  def fromCall (index: int, data: Dict[str, str]) -> 'Tick':
+  def fromCall (data: Dict[str, str]) -> 'Tick':
     return Tick (TickConstructorArgs(
-      index,
+      int(data['index'], 0),
       data['liquidityGross'],
       data['liquidityNet'],
       FeeGrowthOutside (
