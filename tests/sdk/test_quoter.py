@@ -66,8 +66,8 @@ class TestQuoter(unittest.TestCase):
             "method": "quoteExactInputSingle",
             "params": {
                 "params": {
-                    "amountIn": "0xbb8",
-                    "fee": "0x64",
+                    "amountIn": "0x64",
+                    "fee": "0xbb8",
                     "sqrtPriceLimitX96": "0x0",
                     "tokenIn": "cx0000000000000000000000000000000000000001",
                     "tokenOut": "cx0000000000000000000000000000000000000002"
@@ -95,8 +95,8 @@ class TestQuoter(unittest.TestCase):
             "method": "quoteExactOutputSingle",
             "params": {
                 "params": {
-                    "amount": "0xbb8",
-                    "fee": "0x64",
+                    "amount": "0x64",
+                    "fee": "0xbb8",
                     "sqrtPriceLimitX96": "0x0",
                     "tokenIn": "cx0000000000000000000000000000000000000001",
                     "tokenOut": "cx0000000000000000000000000000000000000002"
@@ -165,8 +165,8 @@ class TestQuoter(unittest.TestCase):
             "method": "quoteExactInputSingle",
             "params": {
                 "params": {
-                    "amountIn": "0xbb8",
-                    "fee": "0x64",
+                    "amountIn": "0x64",
+                    "fee": "0xbb8",
                     "sqrtPriceLimitX96": "0x100000000000000000000000000000000",
                     "tokenIn": "cx0000000000000000000000000000000000000001",
                     "tokenOut": "cx0000000000000000000000000000000000000002"
