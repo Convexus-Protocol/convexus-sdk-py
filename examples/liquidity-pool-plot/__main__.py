@@ -1,7 +1,6 @@
 from typing import List
 from convexus.icontoolkit import Contract
-from convexus.sdk import Pool, Tick, Price
-from convexus.sdk.artifacts.contracts import IConvexusPool
+from convexus.sdk import Pool, Tick
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 import asyncio, sys
