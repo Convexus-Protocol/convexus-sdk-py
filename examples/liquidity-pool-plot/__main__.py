@@ -8,6 +8,8 @@ import asyncio, sys
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from convexus.sdk.utils.priceTickConversions import tickToPrice
+
 async def getSortedInitializedTicks(contract) -> List[Tick]:
   # Get amount of initialized ticks
   ticksInitializedSize = await contract.ticksInitializedSize()
@@ -44,7 +46,7 @@ async def main(poolAddress: str):
       data[tick] = liquidity // 10**18
 
   # remap tick key to price
-  data = {int(Price.fromTick(pool.token0, pool.token1, k).toFixed(0)): int(v) for k, v in data.items()}
+  data = {int(tickToPrice(pool.token0, pool.token1, k).toFixed(0)): int(v) for k, v in data.items()}
 
   # Plot
   x = list(data.keys())
