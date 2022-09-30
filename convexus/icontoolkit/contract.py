@@ -108,7 +108,7 @@ class Contract(object):
   def __init__ (
     self,
     address: str, 
-    abi: List | None, 
+    abi: List, 
     iconService: IconService,
     debugService: IconService,
     nid: int
