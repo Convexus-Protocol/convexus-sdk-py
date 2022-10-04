@@ -1,5 +1,8 @@
 from enum import IntEnum
 from typing import Dict
+from convexus.icontoolkit.BigInt import BigInt
+
+from convexus.icontoolkit.constants import BigintIsh
 
 ADDRESS_ZERO = 'hx0000000000000000000000000000000000000000'
 
@@ -11,6 +14,9 @@ class FeeAmount(IntEnum):
   LOW = 500,
   MEDIUM = 3000,
   HIGH = 10000
+
+def parseFeeAmount (s: BigintIsh) -> FeeAmount:
+  return FeeAmount(BigInt(s))
 
 """
 * The default factory tick spacings by fee amount.
