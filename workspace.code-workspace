@@ -4,5 +4,23 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/.github": true,
+			"**/.vscode": true,
+			"**/venv": true,
+			"**/build": true,
+			"**/dist": true,
+			"**/LICENSE": true,
+			"**/**egg-info": true,
+			"**/.mypy_cache": true,
+			"**/.pytest_cache": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"**/Thumbs.db": true
+		}
+	}
 }
