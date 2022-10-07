@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Union
 from convexus.icontoolkit.validateAndParseAddress import validateAndParseAddress
 from convexus.icontoolkit.contract import Contract
+from convexus.sdkcore.entities.icx import Icx
 
 class BaseCurrency(metaclass=ABCMeta):
   """
@@ -102,6 +103,9 @@ class Token(BaseCurrency, metaclass=ABCMeta):
 
   @staticmethod
   async def fromContract (contract: Contract) -> 'Token':
+    if Icx.isWrappedAddress(contract.address):
+      return Icx().wrapped
+
     decimals, name, symbol = await asyncio.gather(
       contract.decimals(), 
       contract.name(), 
