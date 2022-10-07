@@ -3,7 +3,6 @@ from abc import ABCMeta, abstractmethod
 from typing import Union
 from convexus.icontoolkit.validateAndParseAddress import validateAndParseAddress
 from convexus.icontoolkit.contract import Contract
-from convexus.sdkcore.entities.icx import Icx
 
 class BaseCurrency(metaclass=ABCMeta):
   """
@@ -149,3 +148,27 @@ class Token(BaseCurrency, metaclass=ABCMeta):
     return self
   
 Currency = Union[NativeCurrency, Token]
+
+
+class Icx(NativeCurrency):
+  """
+  * ICX is the main usage of a 'native' currency, i.e. for ICON mainnet and all testnets
+  """
+
+  wrappedAddress: str = 'cx1111111111111111111111111111111111111111'
+
+  def __init__(self):
+    super().__init__(18, 'ICX', 'ICX')
+
+  @property
+  def wrapped (self) -> Token:
+    return Token(Icx.wrappedAddress, 18, 'ICX', 'ICX')
+
+  def equals(self, other: Currency) -> bool:
+    return other.isNative and other.symbol == self.symbol
+  
+  @staticmethod
+  def isWrappedAddress (address: str) -> bool:
+    return Icx.wrappedAddress == address
+  
+
