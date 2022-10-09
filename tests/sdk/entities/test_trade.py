@@ -2,6 +2,7 @@ import unittest
 from convexus.icontoolkit.expect import expect
 
 from convexus.sdk.constants import TICK_SPACINGS, FeeAmount
+from convexus.sdk.entities.factoryProvider import PoolFactoryProvider
 from convexus.sdkcore.constants import TradeType
 from convexus.sdkcore.entities.currency import Token
 
@@ -18,7 +19,7 @@ from convexus.sdk.entities.route import Route
 from convexus.sdk.entities.trade import BestTradeOptions, RouteInfo, Trade, RouteAmount, TradeConstructorArgs, UncheckedTradeConstructorArguments
 from convexus.sdkcore.utils.sqrt import sqrt
 from convexus.sdkcore.entities.fractions.currencyAmount import CurrencyAmount
-from convexus.sdk.entities.tick import TickConstructorArgs
+from convexus.sdk.entities.tick import TickConstructorArgs, Tick
 from TestPoolFactoryProvider import TestPoolFactoryProvider
 
 ICX = Icx()
@@ -583,7 +584,7 @@ class TestTradeWithRoutesOutput2(unittest.TestCase):
     expect(result[1].inputAmount.equalTo(CurrencyAmount.fromRawAmount(token0, (10000)))).toBeTruthy()
     expect(result[1].outputAmount.equalTo(CurrencyAmount.fromRawAmount(token2, (7004)))).toBeTruthy()
 
-  def test_respectsMaxHops(self):
+  def test_respectsMaxHops_0(self):
     result = Trade.bestTradeExactIn(
       poolFactoryProvider, 
       [pool_0_1, pool_0_2, pool_1_2],
@@ -595,6 +596,153 @@ class TestTradeWithRoutesOutput2(unittest.TestCase):
     expect(result).toHaveLength(1)
     expect(result[0].swaps[0].route.pools).toHaveLength(1) # 0 -> 2 at 10:11
     expect(result[0].swaps[0].route.tokenPath).toEqual([token0, token2])
+
+  def test_complexRouting(self):
+    sICX = Token("cx79ada8b605380c84507d42534080ada30c77602c", 18, "sICX", "sICX")
+    USDC = Token("cxa818e190782c7bc64c1ec12512c7f8f3171fc8cf", 18, "USDC", "USDC")
+    ICX = Token("cx1111111111111111111111111111111111111111", 18, "ICX", "ICX")
+    WETH = Token("cx1126c5dc7115daea7f55d6b6cf0eb63adeb3529f", 18, "WETH", "WETH")
+    bnUSD = Token("cxc8373f6f2654a9c8b689059aef58aefb9f878e12", 18, "bnUSD", "bnUSD")
+    CRV = Token("cxc8373f6f2654a9c8b689059aef58aefb9f878e12", 18, "CRV", "CRV")
+
+    sICX_USDC = Pool (
+      sICX, USDC,
+      FeeAmount.MEDIUM,
+      '61210590602354947969986',
+      '29088496039794855',
+      -281485,
+      [
+        Tick(TickConstructorArgs(
+          index=-288360,
+          liquidityGross=29088496039794855,
+          liquidityNet=29088496039794855,
+        )),
+        Tick(TickConstructorArgs(
+          index=-274500,
+          liquidityGross=29088496039794855,
+          liquidityNet=-29088496039794855,
+        ))
+      ]
+    )
+
+    ICX_USDC = Pool (
+      ICX, USDC,
+      FeeAmount.MEDIUM,
+      '61191168163216135731103',
+      '264440873089043',
+      -281491,
+      [
+        Tick(TickConstructorArgs(
+          index=-288360,
+          liquidityGross=264440873089043,
+          liquidityNet=264440873089043,
+        )),
+        Tick(TickConstructorArgs(
+          index=-274500,
+          liquidityGross=264440873089043,
+          liquidityNet=-264440873089043,
+        ))
+      ]
+    )
+
+    WETH_CRV = Pool (
+      WETH, CRV,
+      FeeAmount.MEDIUM,
+      '2926083861933460079174379110400',
+      '13958146132191485413231',
+      72185,
+      [
+        Tick(TickConstructorArgs(
+          index=65280,
+          liquidityGross=13958146132191485413231,
+          liquidityNet=13958146132191485413231,
+        )),
+        Tick(TickConstructorArgs(
+          index=79140,
+          liquidityGross=13958146132191485413231,
+          liquidityNet=-13958146132191485413231,
+        ))
+      ]
+    )
+
+    bnUSD_USDC = Pool (
+      bnUSD, USDC,
+      FeeAmount.LOW,
+      '79249731195721224553149',
+      '214688025193493151',
+      -276319,
+      [
+        Tick(TickConstructorArgs(
+          index=-277380,
+          liquidityGross=214688025193493151,
+          liquidityNet=214688025193493151,
+        )),
+        Tick(TickConstructorArgs(
+          index=-275370,
+          liquidityGross=214688025193493151,
+          liquidityNet=-214688025193493151,
+        ))
+      ]
+    )
+
+    ICX_bnUSD = Pool (
+      ICX, bnUSD,
+      FeeAmount.MEDIUM,
+      '62203837691364529249136597252',
+      '10269690441519762194883',
+      -4839,
+      [
+        Tick(TickConstructorArgs(
+          index=-6960,
+          liquidityGross=10269690441519762194883,
+          liquidityNet=10269690441519762194883,
+        )),
+        Tick(TickConstructorArgs(
+          index=-3540,
+          liquidityGross=10269690441519762194883,
+          liquidityNet=-10269690441519762194883,
+        ))
+      ]
+    )
+
+    ICX_WETH = Pool (
+      ICX, WETH,
+      FeeAmount.LOW,
+      '78538556644749228166681187476',
+      '1707481566716281749161',
+      -175,
+      [
+        Tick(TickConstructorArgs(
+          index=-6930,
+          liquidityGross=1707481566716281749161,
+          liquidityNet=1707481566716281749161,
+        )),
+        Tick(TickConstructorArgs(
+          index=-6930,
+          liquidityGross=1707481566716281749161,
+          liquidityNet=-1707481566716281749161,
+        ))
+      ]
+    )
+
+    addresses = ["cx_sICX_USDC", "cx_ICX_USDC", "cx_WETH_CRV", "cx_bnUSD_USDC", "cx_ICX_bnUSD", "cx_ICX_WETH"]
+    pools = [sICX_USDC, ICX_USDC, WETH_CRV, bnUSD_USDC, ICX_bnUSD, ICX_WETH]
+
+    class RoutingPoolFactoryProvider(PoolFactoryProvider):
+      def getPool (self, tokenA: Token, tokenB: Token, fee: FeeAmount):
+        for i in range(len(pools)):
+          pool = pools[i]
+          if pool.token0.equals(tokenA) and pool.token1.equals(tokenB) and pool.fee == fee:
+            return addresses[i]
+
+        raise Exception("Pool not found")
+
+    Trade.bestTradeExactIn(
+      RoutingPoolFactoryProvider(), 
+      pools,
+      CurrencyAmount.fromRawAmount(ICX, 10000),
+      sICX
+    )
 
   def test_insufficientInputForOnePool(self):
     result = Trade.bestTradeExactIn(
@@ -824,7 +972,7 @@ class TestTradeMinimumAmountOutExactOutput(unittest.TestCase):
     expect(result[1].inputAmount.equalTo(CurrencyAmount.fromRawAmount(token0, 15488))).toBeTruthy()
     expect(result[1].outputAmount.equalTo(CurrencyAmount.fromRawAmount(token2, 10000))).toBeTruthy()
 
-  def test_respectsMaxHops(self):
+  def test_respectsMaxHops_1(self):
     result = Trade.bestTradeExactOut(
       poolFactoryProvider, 
       [pool_0_1, pool_0_2, pool_1_2],
