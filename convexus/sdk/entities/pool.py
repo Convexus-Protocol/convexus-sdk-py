@@ -297,9 +297,9 @@ class Pool:
       elif (step.tickNext > TickMath.MAX_TICK):
         step.tickNext = TickMath.MAX_TICK
     
-      direction = (step.sqrtPriceNextX96 < sqrtPriceLimitX96) if zeroForOne else (step.sqrtPriceNextX96 > sqrtPriceLimitX96)
-
       step.sqrtPriceNextX96 = TickMath.getSqrtRatioAtTick(step.tickNext)
+
+      direction = (step.sqrtPriceNextX96 < sqrtPriceLimitX96) if zeroForOne else (step.sqrtPriceNextX96 > sqrtPriceLimitX96)
       state.sqrtPriceX96, step.amountIn, step.amountOut, step.feeAmount = SwapMath.computeSwapStep (
         state.sqrtPriceX96, 
         sqrtPriceLimitX96 if direction else step.sqrtPriceNextX96,
