@@ -578,7 +578,7 @@ class TestTradeWithRoutesOutput2(unittest.TestCase):
     expect(result[0].swaps[0].route.pools).toHaveLength(1) # 0 -> 2 at 10:11
     expect(result[0].swaps[0].route.tokenPath).toEqual([token0, token2])
     expect(result[0].inputAmount.equalTo(CurrencyAmount.fromRawAmount(token0, (10000)))).toBeTruthy()
-    expect(result[0].outputAmount.equalTo(CurrencyAmount.fromRawAmount(token2, (9972)))).toBeTruthy()
+    expect(result[0].outputAmount.equalTo(CurrencyAmount.fromRawAmount(token2, (9971)))).toBeTruthy()
     expect(result[1].swaps[0].route.pools).toHaveLength(2) # 0 -> 1 -> 2 at 12:12:10
     expect(result[1].swaps[0].route.tokenPath).toEqual([token0, token1, token2])
     expect(result[1].inputAmount.equalTo(CurrencyAmount.fromRawAmount(token0, (10000)))).toBeTruthy()
