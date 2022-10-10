@@ -12,11 +12,10 @@ from convexus.sdkcore.entities.icx import Icx
 from convexus.sdkcore.entities.fractions.percent import Percent
 from convexus.sdkcore.entities.fractions.currencyAmount import CurrencyAmount
 from convexus.sdkcore.entities.currency import NativeCurrency, Token
+from convexus.sdkcore.constants import MaxUint256
 
 from convexus.sdk.entities.position import Position, PositionConstructorArgs
 from convexus.sdk.artifacts.contracts.NonfungiblePositionManager import INonfungiblePositionManager
-
-MaxUint128 = toHex((2**128) - 1)
 
 @dataclass
 class MintSpecificOptions:
@@ -337,8 +336,8 @@ class NonfungiblePositionManager(metaclass=ABCMeta):
         [
           tokenId,
           recipient,
-          MaxUint128,
-          MaxUint128
+          MaxUint256,
+          MaxUint256
         ]
       ])
     )
