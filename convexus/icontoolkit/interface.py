@@ -20,35 +20,41 @@ class Interface:
         return obj
       
     raise Exception(f"INVALID_ABI_NAME: {name}")
+  
+  def deserialize(self, value, inputType: str):
+    if inputType == "Address":
+      return validateAndParseAddress(value)
+    elif inputType == "int":
+      return toHex(value)
+    elif inputType == "str":
+      return value
+    elif inputType == "bytes":
+      return value
+    elif inputType == "bool":
+      return toHex(1 if value else 0)
+    else:
+      raise Exception(f"INVALID_PARAM_TYPE: {inputType}")
 
   def buildParam (self, value, input):
-    inputType = input['type']
+    inputType: str = input['type']
     result = {}
+    
+    # Array
+    if inputType.startswith('[]'):
+      result[input['name']]: list = []
+      for v in value:
+        result[input['name']].append(self.deserialize(v, inputType[2:]))
 
-    if inputType == "struct":
+    # Map
+    elif inputType == "struct":
       assert len(value) == len(input['fields']), "INVALID_STRUCT_COUNT"
       result[input['name']] = {}
       for i in range(len(value)):
         result[input['name']] = result[input['name']] | self.buildParam(value[i], input['fields'][i])
 
-    elif inputType == "Address":
-      address = validateAndParseAddress(value)
-      result[input['name']] = address
-
-    elif inputType == "int":
-      result[input['name']] = toHex(value)
-
-    elif inputType == "str":
-      result[input['name']] = value
-
-    elif inputType == "bytes":
-      result[input['name']] = value
-    
-    elif inputType == "bool":
-      result[input['name']] = toHex(1 if value else 0)
-    
+     # Simple type
     else:
-      raise Exception(f"INVALID_PARAM_TYPE: {inputType}")
+      result[input['name']] = self.deserialize(value, inputType)
 
     return result
 
