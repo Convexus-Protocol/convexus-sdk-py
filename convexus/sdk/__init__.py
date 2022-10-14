@@ -6,10 +6,11 @@ from .quoter import *
 from .staker import *
 from .swapRouter import *
 
+from .entities.eventlogs import *
 from .entities.factoryProvider import *
+from .entities.observation import *
 from .entities.pool import *
 from .entities.slot0 import *
-from .entities.observation import *
 from .entities.route import *
 from .entities.tick import *
 from .entities.tickDataProvider import *
