@@ -25,19 +25,16 @@ async def main (poolAddress: str):
   secondsAgo = list(range(0, oldestTime, oldestTime // 250))
   result = await poolContract.observe(secondsAgo)
   tickCumulatives = list(map(lambda x: int(x, 0), result['tickCumulatives']))
-  
-  tickCumulativesDelta = tickCumulatives[0] - tickCumulatives[1]
-  arithmeticMeanTick = (tickCumulativesDelta // secondsAgo[1])
-  
+
   data = {}
   for i in range(1, len(tickCumulatives)):
     tickCumulativesDelta = tickCumulatives[0] - tickCumulatives[i]
     arithmeticMeanTick = tickCumulativesDelta // secondsAgo[i]
     data[secondsAgo[i]] = arithmeticMeanTick
-  
+
   # Map seconds => minutes: tick => price
   data = {k/60: float(tickToPrice(pool.token0, pool.token1, v).toFixed(5)) for k, v in data.items()}
-  
+
   # Plot chronogically
   x = list(data.keys())
   y = list(reversed(data.values()))
