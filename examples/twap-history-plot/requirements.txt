@@ -1,4 +1,3 @@
 convexus
 matplotlib
 seaborn
-requests

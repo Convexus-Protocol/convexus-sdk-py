@@ -1,3 +1,4 @@
+from convexus.icontoolkit import BigInt
 from convexus.icontoolkit.constants import BigintIsh
 from convexus.sdkcore.constants import Rounding
 from convexus.sdkcore.entities.currency import Currency
@@ -16,7 +17,7 @@ class Price(Fraction):
 
   @classmethod
   def fromSqrtPrice(cls, baseCurrency: Currency, quoteCurrency: Currency, sqrtPrice: BigintIsh) -> 'Price':
-    return Price(baseCurrency, quoteCurrency, 2**192, sqrtPrice**2)
+    return Price(baseCurrency, quoteCurrency, 2**192, BigInt(sqrtPrice)**2)
 
   @classmethod
   def fromAmounts(cls, baseAmount: CurrencyAmount, quoteAmount: CurrencyAmount) -> 'Price':

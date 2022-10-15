@@ -6,15 +6,6 @@ from convexus.sdk.utils.priceTickConversions import tickToPrice
 
 import seaborn as sns, time, sys, asyncio
 import matplotlib.pyplot as plt
-import requests, time, json
-from datetime import datetime, timezone
-
-from convexus.sdkcore.entities.fractions.price import Price
-
-def get_utc_timestamp() -> int:
-  dt = datetime.now(timezone.utc)
-  utc_time = dt.replace(tzinfo=timezone.utc)
-  return utc_time.timestamp()
 
 async def main (poolAddress: str):
   # Create an ICON service object
@@ -26,19 +17,23 @@ async def main (poolAddress: str):
   poolContract = Contract(poolAddress, poolAbi, iconService, iconService, 7)
   pool = await Pool.fromContract(poolContract)
   
-  # Get history items
-  r = requests.get(
-    'http://127.0.0.1:8000/intrinsics/get', 
-    params={
-      'pool_address': poolAddress,
-      'timestamp': int(get_utc_timestamp() - 3600) # last day
-    }
-  )
-  intrinsics = json.loads(r.text)
+  # Get oldest oracle entry
+  oldestObservation = OracleObservation.fromCall(await poolContract.oldestObservation())
+  oldestTime = int(time.time() - oldestObservation.blockTimestamp) - 1
+
+  # Get about ~250 TWAPs
+  secondsAgo = list(range(0, oldestTime, oldestTime // 250))
+  result = await poolContract.observe(secondsAgo)
+  tickCumulatives = list(map(lambda x: int(x, 0), result['tickCumulatives']))
 
   data = {}
-  for info in intrinsics:
-    data[datetime.fromtimestamp(info['timestamp'])] = float(Price.fromSqrtPrice(pool.token0, pool.token1, info['sqrtPriceX96']).toFixed(5))
+  for i in range(1, len(tickCumulatives)):
+    tickCumulativesDelta = tickCumulatives[0] - tickCumulatives[i]
+    arithmeticMeanTick = tickCumulativesDelta // secondsAgo[i]
+    data[secondsAgo[i]] = arithmeticMeanTick
+
+  # Map seconds => minutes: tick => price
+  data = {k/60: float(tickToPrice(pool.token0, pool.token1, v).toFixed(5)) for k, v in data.items()}
 
   # Plot chronogically
   x = list(data.keys())
@@ -46,7 +41,7 @@ async def main (poolAddress: str):
   sns.set_theme()
   plt.plot(x, y)
   plt.title(f"{pool.token0.symbol} / {pool.token1.symbol} Price")
-  plt.xlabel("Time")
+  plt.xlabel("Time (minutes)")
   plt.ylabel("Price")
   plt.show()
 
