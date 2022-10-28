@@ -134,7 +134,28 @@ class TestPoolinitializer(unittest.TestCase):  # Create two tokens
     
     # Initialize the pool + mint position
     calldatas = PoolInitializer.createAndMintCallParameters(position, recipient, deadline)
-    expect(calldatas[0]).toBe(
+    
+    expect(calldatas[0]).toBe({
+      "method": "transfer",
+      "params": {
+          "_data": "0x7b226d6574686f64223a226465706f736974222c22706172616d73223a7b7d7d",
+          "_to": "PoolInitializer",
+          "_value": "0x452d3f9ea9235439"
+      },
+      "to": "cx0000000000000000000000000000000000000001"
+    })
+    
+    expect(calldatas[1]).toBe({
+      "method": "transfer",
+      "params": {
+          "_data": "0x7b226d6574686f64223a226465706f736974222c22706172616d73223a7b7d7d",
+          "_to": "PoolInitializer",
+          "_value": "0x692a76b89ac3c052fb"
+      },
+      "to": "cx0000000000000000000000000000000000000002"
+    })
+    
+    expect(calldatas[2]).toBe(
       {
         "to": "PoolInitializer",
         "method": "createAndInitializePoolIfNecessaryAndMintPosition",

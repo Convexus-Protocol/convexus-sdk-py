@@ -1,4 +1,5 @@
 from typing import List
+from convexus.icontoolkit.BigInt import BigInt
 from convexus.icontoolkit.calldata import toHex
 from convexus.icontoolkit.constants import BigintIsh
 from convexus.icontoolkit.interface import Interface, CallData
@@ -11,6 +12,7 @@ from convexus.sdk.nonfungiblePositionManager import MintOptions, NonfungiblePosi
 from convexus.sdk.utils.encodeSqrtRatioX96 import encodeSqrtRatioX96
 from convexus.sdk.utils.tickMath import TickMath
 from convexus.sdkcore import Token
+from convexus.sdkcore.entities.currency import Icx
 from convexus.sdkcore.entities.fractions.price import Price
 
 class PoolInitializer:
@@ -28,6 +30,22 @@ class PoolInitializer:
       pool.fee,
       toHex(pool.sqrtRatioX96)
     ])
+
+  @staticmethod
+  def encodeDeposit (token: Token, amount: BigintIsh) -> CallData:
+    amount = BigInt(amount)
+
+    if (Icx.isWrappedAddress(token.address)):
+      return PoolInitializer.INTERFACE.encodeFunctionDataPayable(
+        amount,
+        'depositIcx', []
+      )
+    else:
+      return PoolInitializer.INTERFACE.encodeTokenFallbackFunctionData(
+        token.address,
+        amount,
+        'deposit', [], []
+      )
 
   @staticmethod
   def encodeCreateAndMint(
@@ -66,4 +84,8 @@ class PoolInitializer:
     recipient: str,
     deadline: int
   ) -> List[CallData]:
-    return [PoolInitializer.encodeCreateAndMint(position, recipient, deadline)]
+    return [
+      PoolInitializer.encodeDeposit(position.pool.token0, position.amount0.quotient),
+      PoolInitializer.encodeDeposit(position.pool.token1, position.amount1.quotient),
+      PoolInitializer.encodeCreateAndMint(position, recipient, deadline)
+    ]
