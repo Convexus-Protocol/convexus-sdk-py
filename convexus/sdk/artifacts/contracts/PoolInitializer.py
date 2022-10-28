@@ -53,11 +53,11 @@ IPoolInitializer = [
                 "type": "int"
             },
             {
-                "name": "amount0Desired",
+                "name": "amount0",
                 "type": "int"
             },
             {
-                "name": "amount1Desired",
+                "name": "amount1",
                 "type": "int"
             },
             {
