@@ -51,6 +51,10 @@ class FromAmount1Args:
 class Amounts:
   amount0: int
   amount1: int
+  
+  def __iter__(self):
+    yield self.amount0
+    yield self.amount1
 
 
 class Position:

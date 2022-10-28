@@ -1,6 +1,7 @@
 import unittest
 from convexus.icontoolkit.expect import expect
 from convexus.sdk.entities.position import Position, PositionConstructorArgs
+from convexus.sdk.utils.tickMath import TickMath
 from convexus.sdkcore.constants import MaxUint256
 
 from convexus.sdkcore.entities.currency import Token
@@ -57,7 +58,7 @@ class TestPoolinitializer(unittest.TestCase):  # Create two tokens
     lowerBoundPrice = 500
     higherBoundPrice = 800
 
-    EXA = 1000000000000000000
+    EXA = 10**18
     amount0 = EXA * 5 # 5 token0
     amount1 = MaxUint256 # compute amount1 needed
 
@@ -93,3 +94,63 @@ class TestPoolinitializer(unittest.TestCase):  # Create two tokens
       )
     )
 
+  def test_createInitializeMint(self):
+    # Init price: 1 token0 = 600 token1
+    sqrtRatioX96: int = encodeSqrtRatioX96(600, 1)
+    
+    # Provide liquidity between 500 and 800
+    lowerBoundPrice = 500
+    higherBoundPrice = 800
+    
+    tickLower = nearestUsableTick(priceToClosestTick(Price(token0, token1, 1, lowerBoundPrice)), TICK_SPACINGS[fee])
+    tickUpper = nearestUsableTick(priceToClosestTick(Price(token0, token1, 1, higherBoundPrice)), TICK_SPACINGS[fee])
+    
+    # Create a virtual pool
+    pool = Pool(token0, token1, fee, sqrtRatioX96, 0, TickMath.getTickAtSqrtRatio(sqrtRatioX96))
+    
+    EXA = 10**18
+    amount0 = EXA * 5 # 5 token0
+    amount1 = MaxUint256 # compute amount1 needed
+    
+    # Compute the max liquidity given the amounts
+    liquidity = maxLiquidityForAmounts (
+      pool.sqrtRatioX96, # Pool price
+      encodeSqrtRatioX96(lowerBoundPrice, 1), # lower bound price
+      encodeSqrtRatioX96(higherBoundPrice, 1), # upper bound price
+      amount0, amount1, # amounts of token provided
+      True
+    )
+
+    position = Position(PositionConstructorArgs(
+      pool,
+      tickLower,
+      tickUpper,
+      liquidity
+    ))
+
+    # adress that will receive the position NFT
+    recipient = 'hx0000000000000000000000000000000000000003'
+    deadline = 123
+    
+    # Initialize the pool + mint position
+    calldatas = PoolInitializer.createAndMintCallParameters(position, recipient, deadline)
+    expect(calldatas[0]).toBe(
+      {
+        "to": "PoolInitializer",
+        "method": "createAndInitializePoolIfNecessaryAndMintPosition",
+        "params": {
+            "token0": "cx0000000000000000000000000000000000000001",
+            "token1": "cx0000000000000000000000000000000000000002",
+            "fee": "0xbb8",
+            "sqrtPriceX96": "0x187eb1990b697a000000000000",
+            "tickLower": "0xf2d0",
+            "tickUpper": "0x10518",
+            "amount0Desired": "0x452d3f9ea9235439",
+            "amount1Desired": "0x692a76b89ac3c052fb",
+            "amount0Min": "0x0",
+            "amount1Min": "0x0",
+            "recipient": "hx0000000000000000000000000000000000000003",
+            "deadline": "0x7b"
+        }
+      }
+    )
